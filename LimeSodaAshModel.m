@@ -45,12 +45,22 @@ s = 3;
 
 Ksp = 3.36 * 10^(-9);
 
-%Checking if enough Ca is present to remove Sr and adds soda ash if not
-%(needs fixed to account for NCCa)
+%Checking if enough Ca is present to remove Sr and adds soda ash if not.
+%First if statement is for all calcium carbonate hardness, second if
+%statement is for combination of carbonate and non-carbonate calcium
+%hardness
 
-if 2 * Ca < s * Sr
+if 2 * Ca < s * Sr && 2 * Ca <= Alk
     
     Ca_add = (s * Sr) - (2 * Ca);
+    
+    Ca = Ca + Ca_add;
+    
+end
+
+if 2 * Ca < s * Sr && 2 * Ca > Alk
+    
+    Ca_add = (s * Sr) - Alk - (Ca - (0.5 * Alk));
     
     Ca = Ca + Ca_add;
     
@@ -74,7 +84,7 @@ elseif 2 * (Ca + Ba + Sr + Mg) > Alk && 2 * (Ca + Ba + Sr) <= Alk
     CMg = (Alk - 2 * (Ca + Ba + Sr)) / 2;
     NCMg = Mg - CMg;
     
-elseif 2* (Ca + Ba + Sr + Mg) > Alk && 2* (Ca + Ba + Sr) > Alk
+elseif 2 * (Ca + Ba + Sr + Mg) > Alk && 2 * (Ca + Ba + Sr) > Alk
     
     CCa = Alk;
     NCCa = Ca + Ba + Sr - (0.5 * Alk);
