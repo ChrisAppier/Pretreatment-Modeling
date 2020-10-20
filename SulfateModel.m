@@ -1,62 +1,70 @@
 %This model calculates the amount of sodium sulfate required to remove
-%calcium, barium, and strontium in water. Strontium removal is through
+%barium and strontium in water. Strontium removal is through
 %substitution with barium.
 
-%Prompting the user for the starting and ending Ca, Ba, and Sr concentrations
+%Loading the input data files as mol/L
 
-prompt = 'Enter calcium concentration (mol/L)\n';
-Ca_start = input(prompt);
+load('Ba_input')
+load('Sr_input')
+load('inefficiency')
 
-prompt = 'Enter barium concentration (mol/L)\n';
-Ba_start = input(prompt);
+%Defining constants, these still need to be filled in with real #s
 
-prompt = 'Enter strontium concentration (mol/L)\n';
-Sr_start = input(prompt);
-
-prompt = 'Enter desired calcium concentration (mol/L)\n';
-Ca_end = input(prompt);
-
-prompt = 'Enter desired barium concentration (mol/L)\n';
-Ba_end = input(prompt);
-
-prompt = 'Enter desired strontium concentration (mol/L)\n';
-Sr_end = input(prompt);
-
-%Establishes substitution ratio (Ba per Sr substitutions) and BaSO4 Ksp
-
+Ba_end = 0.01;
+Sr_end = 0.01;
 s = 3;
+Ksp = 10 * 10^(-8);
 
-Ksp = 9.1 * 10^(-6);
+%Checking the number of data points for each input to ensure they are equal and
+%setting the number of loops for the model equal to that size or ending the
+%program
+
+if isequal(height(Ba_input),height(Sr_input),height(inefficiency))
+    
+    n = height(Ba_input);
+    
+else
+
+    disp('Input files contain unequal number of data points. The program will not run. Check the data and try again')      
+    return
+    
+end
+
+%Main loop
+
+for i = 1:n
 
 %Calculates change in pollutant concentrations
 
-Ca = Ca_start - Ca_end;
+    Ba = Ba_input(i) - Ba_end;
 
-Ba = Ba_start - Ba_end;
-
-Sr = Sr_start - Sr_end;
+    Sr = Sr_input(i) - Sr_end;
 
 %Determines if Ba will limit Sr removal
 
-if Ba < s * (Sr)
+    if Ba < s * Sr
     
-    Ba_add = (s * Sr) - Ba;
+        Ba_add(i) = (s * Sr) - Ba;
     
-    Ba = Ba + Ba_add;
+        Ba = Ba + Ba_add(i);
+      
+    else
+        
+        Ba_add(i) = 0;
     
-end    
+    end    
 
-%Calculates the sulfate required to remove the Ba/Sr and the amount of Ba
-%addition required, if necessary
+%Calculates the sulfate required to remove the Ba and Sr
 
-sulfate = (Ksp / Ca_end) + Sr + Ba + Ca;
+    sulfate(i) = ((Ksp / Ba_end) + Sr + Ba) * inefficiency(i);
+    
+end
     
 %Debug Section
-%disp('Ba');
-%disp(Ba);
+
 
 %Additions required output
-disp('Sulfate (mol/L) =');
-disp(sulfate);
-disp('Ba to add (mol/L) =')
-disp(Ba_add);
+%disp('Sulfate (mol/L) =');
+%disp(sulfate);
+%disp('Ba to add (mol/L) =')
+%disp(Ba_add);
