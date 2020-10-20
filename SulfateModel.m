@@ -65,5 +65,3 @@ sulfate = transpose(sulfate);
 Ba_add = transpose(Ba_add);
 writematrix(sulfate,'Sulfate_Addition.txt');
 writematrix(Ba_add, 'Ba_Addition.txt');
-    
-%Debug Section
