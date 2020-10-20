@@ -63,7 +63,14 @@ end
 %Transposes the columns to rows and writes the sulfate and barium additions to a text file
 sulfate = transpose(sulfate);
 Ba_add = transpose(Ba_add);
-writematrix(sulfate,'Sulfate_Addition.txt');
-writematrix(Ba_add, 'Ba_Addition.txt');
+writematrix(sulfate,'SulfateModel.txt');
+writematrix(Ba_add, '
     
 %Debug Section
+
+
+%Additions required output
+%disp('Sulfate (mol/L) =');
+%disp(sulfate);
+%disp('Ba to add (mol/L) =')
+%disp(Ba_add);
