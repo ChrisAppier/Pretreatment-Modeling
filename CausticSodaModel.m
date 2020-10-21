@@ -20,11 +20,16 @@ Ksp = 10 * 10^(-8);
 
 %Checking the number of data points for each input to ensure they are equal and
 %setting the number of loops for the model equal to that size or ending the
-%program
+%program. Also preallocates caustic soda and soda ash addition variables for
+%efficiency.
 
 if isequal(height(Ca_input),height(Mg_input),height(Ba_input),height(Sr_input),height(inefficiency),height(Alk_input))
     
     n = height(Ba_input);
+    
+    Caustic = zero(n,1);
+    
+    Soda = zero(n,1);
     
 else
 

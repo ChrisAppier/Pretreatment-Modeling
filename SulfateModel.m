@@ -17,11 +17,16 @@ Ksp = 10 * 10^(-8);
 
 %Checking the number of data points for each input to ensure they are equal and
 %setting the number of loops for the model equal to that size or ending the
-%program
+%program. Also preallocates sulfate and barium addition variables for
+%efficiency.
 
 if isequal(height(Ba_input),height(Sr_input),height(inefficiency))
     
     n = height(Ba_input);
+    
+    Ba_add = zeros(n,1);
+    
+    sulfate = zeros(n,1);
     
 else
 
