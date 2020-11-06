@@ -10,17 +10,19 @@ load('Sr_input')
 load('Alk_input')
 load('inefficiency')
 
-%Defining constants, these still need to be filled in with real #s
+%Defining treatment goals for contaminants (end), solubility constant
+%(Ksp for Ca used), and the kW energy required per mol/L of caustic soda (e_fac).
 
 Ca_end = 0.01;
 Mg_end = 0.01;
 Ba_end = 0.01;
 Sr_end = 0.01;
-Ksp = 10 * 10^(-8);
+Ksp    = 3.8 * 10^(-9);
+e_fac  = 0.159988;
 
 %Checking the number of data points for each input to ensure they are equal and
 %setting the number of loops for the model equal to that size or ending the
-%program. Also preallocates caustic soda and soda ash addition variables for
+%program. Also preallocates caustic soda, soda ash, and energy addition variables for
 %efficiency.
 
 if isequal(height(Ca_input),height(Mg_input),height(Ba_input),height(Sr_input),height(inefficiency),height(Alk_input))
@@ -30,6 +32,8 @@ if isequal(height(Ca_input),height(Mg_input),height(Ba_input),height(Sr_input),h
     Caustic = zero(n,1);
     
     Soda = zero(n,1);
+    
+    Energy = zero(n,1);
     
 else
 
@@ -79,11 +83,14 @@ for i = 1:n
     
     end
 
-%Calculates the amount of caustic soda and soda ash required
+%Calculates the amount of caustic soda, soda ash required, and energy
+%required
 
-    Caustic(i) = 2*CCa + 4*CMg + 2*NCMg + (Ksp / Ba_end);
+    Caustic(i) = 2*CCa + 4*CMg + 2*NCMg + (Ksp / Ca_end);
 
     Soda(i) = NCCa;
+    
+    Energy(i) = Caustic(i) * e_fac;
 
 end
     
@@ -91,4 +98,5 @@ end
 Caustic = transpose(Caustic);
 Soda = transpose(Soda);
 writematrix(Caustic,'CausticSoda_Addition.txt');
-writematrix(Soda, 'SodaAsh_Addition.txt');
+writematrix(Soda, 'CausticSoda_SodaAsh_Addition.txt');
+writematrix(Energy, 'CausticSoda_Energy_Addition.txt');

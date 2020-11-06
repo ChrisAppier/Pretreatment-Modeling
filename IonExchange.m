@@ -107,12 +107,10 @@ for k=1:l
             TCa = RCa + WCa;
             TMg = RMg + WMg;
 
-%options = optimset('Display','off','TolFun', 1.0e-4, 'TolX',1.0e-4,'algorithm','levenberg-marquardt');
             options = optimset('Display','off','TolFun', 1.0e-4, 'TolX',1.0e-4);
             f = @(dummy)msolve(dummy,TR,KBN,KSN,KCN,KMN,TNa,TBa,TSr,TCa,TMg);
 
             [set] = fsolve(f,set0,options);
-%[set,fval,exitflag,output,jacobian]=fsolve(f,set0,options);
 
             RESIN.Na(i+1,j) = set(1);
             RESIN.Ba(i+1,j) = set(2);
@@ -135,9 +133,10 @@ for k=1:l
 %Stores the number of bed volumes completed             
             bed_volumes(k) = floor(i/m);
             
+            
     end
 
 end
 
 %Saves the bed volumes, rounded down to the nearest whole number, to a file
-save('IonExchange_Output.mat','bed_volumes');
+writematrix(bed_volumes, 'IonExchange_BedVolumes.txt');

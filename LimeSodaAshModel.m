@@ -11,7 +11,9 @@ load('Sr_input')
 load('Alk_input')
 load('inefficiency')
 
-%Defining constants, these still need to be filled in with real #s
+%Defining treatment goals for contaminants (end), solubility constant
+%(Ksp for Ca used), and the Ca:Sr co-precipitation ratio (calcium removed
+%per strontium)
 
 Ca_end = 0.01;
 Mg_end = 0.01;
@@ -114,4 +116,4 @@ end
 Lime = transpose(Lime);
 Soda = transpose(Soda);
 writematrix(Lime,'Lime_Addition.txt');
-writematrix(Soda, 'SodaAsh_Addition.txt');
+writematrix(Soda, 'Lime_SodaAsh_Addition.txt');
