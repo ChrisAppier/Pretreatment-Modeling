@@ -104,7 +104,7 @@ for k=1:l
             TNa = RNa + WNa;
             TBa = RBa + WBa;
             TSr = RSr + WSr;
-            TCa = RCa + WCa;
+            TCa = RCa + WCa; 
             TMg = RMg + WMg;
 
             options = optimset('Display','off','TolFun', 1.0e-4, 'TolX',1.0e-4);
@@ -132,7 +132,6 @@ for k=1:l
             
 %Stores the number of bed volumes completed             
             bed_volumes(k) = floor(i/m);
-            
             
     end
 
