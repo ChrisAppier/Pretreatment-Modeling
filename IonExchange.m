@@ -13,6 +13,9 @@
 %coefficients (K). Five cations are studied in this experiment - sodium,
 %barium, strontium, calcium, and magnesium.
 
+clc
+clear
+
 %% WATER CONSTITUENT FILES
 
 %Loading the contaminant data (mol/L)
@@ -41,19 +44,28 @@ TR = 1000;
 
 %Equilibrium constant (K) value between barium and sodium (KBS), strontium
 %and sodium (KSN), calcium and sodium (KCN), and magnesium and sodium (KMN)
-KBN = 0; 
-KSN = 0; 
-KCN = 0;  %Needs values input from a source
-KMN = 0; 
+%for PSS
+KBN = 0.45; 
+KSN = 0.32; 
+KCN = 0.30;
+KMN = 0.23; 
+
+%Equilibrium constant (K) value between barium and sodium (KBS), strontium
+%and sodium (KSN), calcium and sodium (KCN), and magnesium and sodium (KMN)
+%for PAA
+%KBN = 0.; 
+%KSN = 0.; 
+%KCN = 0.;
+%KMN = 0.; 
 
 %Resin matrix (initial condition) - Initial assumption that KMN and KBN are
 %equal ---> (WHY THO?)
 
 %Contaminant limits (meq/L)
-Ba_limit = 0;
-Sr_limit = 0;
-Ca_limit = 0;  %Needs values input from a source
-Mg_limit = 0;
+Ca_limit = 5 * 10^(-4) * 2;
+Mg_limit = 4.11 * 10^(-4) * 2;
+Ba_limit = 1.46 * 10^(-5) * 2;
+Sr_limit = 1.71 * 10^(-5) * 2;
 
 %m = number of segments the column is divided into + 1 (for initial
 %conditions). n = initial estimate for the number of bed volumes treated
