@@ -33,11 +33,11 @@ Mg_meq=1/24.305;
 Na_meq=1/22.990;
 
 %Converting the contaminant data to milliequivalents
-Ba_Inf = Ba_input * Ba_meq; 
-Sr_Inf = Sr_input * Sr_meq;
-Ca_Inf = Ca_input * Ca_meq;
-Mg_Inf = Mg_input * Mg_meq;
-Na_Inf = Na_input * Na_meq;
+Ba_Inf = Ba_input * Ba_meq/1000; 
+Sr_Inf = Sr_input * Sr_meq/1000;
+Ca_Inf = Ca_input * Ca_meq/1000;
+Mg_Inf = Mg_input * Mg_meq/1000;
+Na_Inf = Na_input * Na_meq/1000;
 
 %Number of resin sites (meq/L) in each column
 TR = 1000; 
@@ -58,14 +58,11 @@ KMN = 0.23;
 %KCN = 0.;
 %KMN = 0.; 
 
-%Resin matrix (initial condition) - Initial assumption that KMN and KBN are
-%equal ---> (WHY THO?)
-
 %Contaminant limits (meq/L)
-Ca_limit = 5 * 10^(-4) * 2;
-Mg_limit = 4.11 * 10^(-4) * 2;
-Ba_limit = 1.46 * 10^(-5) * 2;
-Sr_limit = 1.71 * 10^(-5) * 2;
+Ca_limit = 5 * 10^(-1) * 2;
+Mg_limit = 4.11 * 10^(-1) * 2;
+Ba_limit = 1.46 * 10^(-2) * 2;
+Sr_limit = 1.71 * 10^(-2) * 2;
 
 %m = number of segments the column is divided into + 1 (for initial
 %conditions). n = initial estimate for the number of bed volumes treated
@@ -86,7 +83,7 @@ for k=1:l
         for j=1:m
             
 %Initial condition of virgin resin (preloaded with Na)                                   
-            RESIN.Na(1,1:m) = 1000;
+            RESIN.Na(1,1:m) = 1000; %may not run due to matlab version 2015a (also try testing on windows)
             RESIN.Ba(1,1:m) = 0;
             RESIN.Sr(1,1:m) = 0;
             RESIN.Ca(1,1:m) = 0;
