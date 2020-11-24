@@ -14,7 +14,7 @@ load('Alk_input')
 load('inefficiency')
 
 %Defining treatment goals for contaminants (end), solubility constant
-%(Ksp for Ca carbonate used), and the kW energy required per mol/L of caustic soda (e_fac).
+%(Ksp for Ca carbonate used), and the kWh energy required per mol/L of caustic soda (e_fac).
 
 Ca_end = 5 * 10^(-5);
 Mg_end = 4.11 * 10^(-4);
