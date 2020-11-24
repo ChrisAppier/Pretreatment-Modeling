@@ -57,6 +57,10 @@ for i = 1:n
     
 end
 
+%Add lime soda ash removal model for Ca, Mg
+
 %Transposes the columns to rows and writes the sulfate and barium additions to a text file
 writematrix(sulfate,'Sulfate_Addition.txt');
 writematrix(Ba_add, 'Sulfate_Ba_Addition.txt');
+
+%Convert to mass (to match SimaPro output)
