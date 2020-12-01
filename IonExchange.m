@@ -70,7 +70,7 @@ Sr_limit = 1.71 * 10^(-2) * 2;
 %l = number of data points for each contaminant.
 m = 10; 
 n = 2000*m;
-l = 10000;
+l = 3;
 
 %% SOLVER FUNCTION
 for k=1:l 
@@ -147,4 +147,4 @@ for k=1:l
 end
 
 %Saves the bed volumes, rounded down to the nearest whole number, to a file
-writematrix(bed_volumes, 'IonExchange_BedVolumes.txt');
+xlswrite('IonExchange_BedVolumes.xlsx', bed_volumes);
