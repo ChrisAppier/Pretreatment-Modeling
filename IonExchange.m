@@ -33,11 +33,11 @@ Mg_meq=1/24.305;
 Na_meq=1/22.990;
 
 %Converting the contaminant data to milliequivalents
-Ba_Inf = Ba_input * Ba_meq/1000; 
-Sr_Inf = Sr_input * Sr_meq/1000;
-Ca_Inf = Ca_input * Ca_meq/1000;
-Mg_Inf = Mg_input * Mg_meq/1000;
-Na_Inf = Na_input * Na_meq/1000;
+Ba_Inf = Ba_input * Ba_meq*100; 
+Sr_Inf = Sr_input * Sr_meq*100;
+Ca_Inf = Ca_input * Ca_meq*100;
+Mg_Inf = Mg_input * Mg_meq*100;
+Na_Inf = Na_input * Na_meq*100;
 
 %Number of resin sites (meq/L) in each column
 TR = 1000; 
@@ -58,22 +58,23 @@ KMN = 0.23;
 %KCN = 0.;
 %KMN = 0.; 
 
-%Contaminant limits (meq/L)
-Ca_limit = 5 * 10^(-1) * 2;
-Mg_limit = 4.11 * 10^(-1) * 2;
-Ba_limit = 1.46 * 10^(-2) * 2;
-Sr_limit = 1.71 * 10^(-2) * 2;
+%Contaminant limits (meq/L) (CHECK THESE)
+Ca_limit = 5 * 10^(-4) * 2;
+Mg_limit = 4.11 * 10^(-4) * 2;
+Ba_limit = 1.46 * 10^(-5) * 2;
+Sr_limit = 1.71 * 10^(-5) * 2;
 
 %m = number of segments the column is divided into + 1 (for initial
 %conditions). n = initial estimate for the number of bed volumes treated
 %(code stops on breakthrough of contaminant at a given level set above). 
 %l = number of data points for each contaminant.
 m = 10; 
-n = 2000*m;
+n = 100*m;
 l = 3;
+bed_volumes = zeros(l,1);
 
 %% SOLVER FUNCTION
-for k=1:l 
+for k=1:l
     
 %Preallocating resin and water variables and/or filling them with zeroes 
     RESIN = zeros(n,m);
@@ -83,7 +84,7 @@ for k=1:l
         for j=1:m
             
 %Initial condition of virgin resin (preloaded with Na)                                   
-            RESIN.Na(1,1:m) = 1000; %may not run due to matlab version 2015a (also try testing on windows)
+            RESIN.Na(1,1:m) = TR;
             RESIN.Ba(1,1:m) = 0;
             RESIN.Sr(1,1:m) = 0;
             RESIN.Ca(1,1:m) = 0;
@@ -140,11 +141,10 @@ for k=1:l
              end 
             
 %Stores the number of bed volumes completed             
-            bed_volumes(k) = floor(i/m);
-            
+            bed_volumes(k,1) = floor(i/m)
     end
 
 end
-
+                                                                 
 %Saves the bed volumes, rounded down to the nearest whole number, to a file
 xlswrite('IonExchange_BedVolumes.xlsx', bed_volumes);

@@ -89,7 +89,8 @@ for i = 1:n
 
 end
     
-%Saves the energy, caustic soda, and soda ash required to a file
-xlswrite('CausticSoda_Caustic.xlsx', Caustic);
-xlswrite('CausticSoda_Soda.xlsx', Soda);
+%Saves the sulfate, lime, and soda ash required to a file
+xlswrite('Sulfate_Sulfate.xlsx', Sulfate);
+xlswrite('Sulfate_Lime.xlsx', Lime);
+xlswrite('Sulfate_Soda.xlsx', Soda);
 xlswrite('CausticSoda_Energy.xlsx', Energy);

@@ -78,12 +78,18 @@ for i = 1:n
 
     Soda(i,1) = NCCa + NCMg;
     
+%Converts lime and soda ash to g/m^3
+
+    Lime(i,1) = Lime(i,1) * 1000 * 100.0869;
+    
+    Soda(i,1) = Soda(i,1) * 1000 * 105.9888; %molar mass is for anhydrous
+    
 %Calculates the amount of Sr left in water
     
     Sr_end(i,1) = Sr_input(1,i) - Sr;
     
 end
 
-%Writes lime and soda ash additions to a text file
-writematrix(Lime,'Lime_Addition.txt');
-writematrix(Soda, 'Lime_SodaAsh_Addition.txt');
+%Saves the lime and soda ash required to a file
+xlswrite('LimeSodaAsh_Lime.xlsx', Lime);
+xlswrite('LimeSodaAsh_Soda.xlsx', Soda);

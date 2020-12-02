@@ -72,7 +72,8 @@ for i = 1:n
     Mg = Mg_input(1,i) - Mg_end;
 
 %Calculates carbonate hardness (CCa and CMg) and non-carbonate hardness
-%(NCCa and NCMg).
+%(NCCa and NCMg). Ba and Sr behave similar to Ca and are all combined under
+%the CCa and NCCa variables
 
     if 2 * (Ca + Mg) <= Alk_input(1,i)
     
@@ -81,14 +82,14 @@ for i = 1:n
         CMg = Mg;
         NCMg = 0;
 
-    elseif 2 * (Ca + Mg) > Alk_input(1,i) && 2 * Ca <= Alk_input(1,i)
+    elseif 2 * (Ca + Mg) > Alk_input(1,i) && 2 * (Ca) <= Alk_input(1,i)
     
         CCa = Ca;
         NCCa = 0;
-        CMg = (Alk_input(1,i) - 2 * Ca) / 2;
+        CMg = (Alk_input(1,i) - 2 * (Ca)) / 2;
         NCMg = Mg - CMg;
     
-    elseif 2 * (Ca + Mg) > Alk_input(1,i) && 2 * Ca > Alk_input(1,i)
+    elseif 2 * (Ca + Mg) > Alk_input(1,i) && 2 * (Ca) > Alk_input(1,i)
     
         CCa = Alk_input(1,i);
         NCCa = Ca - (0.5 * Alk_input(1,i));
