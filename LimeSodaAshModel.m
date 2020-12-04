@@ -4,6 +4,7 @@
 
 clc
 clear 
+tic
 
 %Loading the input data files as mol/L
 
@@ -91,5 +92,7 @@ for i = 1:n
 end
 
 %Saves the lime and soda ash required to a file
-xlswrite('LimeSodaAsh_Lime.xlsx', Lime);
-xlswrite('LimeSodaAsh_Soda.xlsx', Soda);
+csvwrite('LimeSodaAsh_Lime.csv', Lime);
+csvwrite('LimeSodaAsh_Soda.csv', Soda);
+
+toc

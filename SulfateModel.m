@@ -4,11 +4,15 @@
 
 clc 
 clear
+tic
 
 %Loading the input data files as mol/L
 
 load('Ba_input')
 load('Sr_input')
+load('Ca_input')
+load('Mg_input')
+load('Alk_input')
 load('inefficiency')
 
 %%Defining treatment goals for contaminants (end), solubility constant
@@ -17,6 +21,8 @@ load('inefficiency')
 
 Ba_end = 1.46 * 10^(-5);
 Sr_end = 1.71 * 10^(-5);
+Ca_end = 5 * 10^(-5);
+Mg_end = 4.11 * 10^(-4);
 s = 5.67;
 Ksp = 1.1 * 10^(-10);
 
@@ -29,7 +35,7 @@ ba_add = zeros(n,1);
 
 %Main loop for Ba and Sr removal
 
-for i = 1:n
+parfor i = 1:n
 
 %Calculates change in pollutant concentrations
 
@@ -63,7 +69,7 @@ end
 
 %Main loop for Ca and Mg removal
 
-for i = 1:n
+parfor i = 1:n
 
 %Calculates change in pollutant concentrations
 
@@ -114,6 +120,8 @@ end
 %Add lime soda ash removal model for Ca, Mg
 
 %Saves the sulfate, lime, and soda ash required to a file
-xlswrite('Sulfate_Sulfate.xlsx', Sulfate);
-xlswrite('Sulfate_Lime.xlsx', Lime);
-xlswrite('Sulfate_Soda.xlsx', Soda);
+csvwrite('Sulfate_Sulfate.csv', Sulfate);
+csvwrite('Sulfate_Lime.csv', Lime);
+csvwrite('Sulfate_Soda.csv', Soda);
+
+toc

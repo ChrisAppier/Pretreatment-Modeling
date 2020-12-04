@@ -3,6 +3,7 @@
 
 clc
 clear 
+tic
 
 %Loading the input data files as mol/L
 
@@ -33,7 +34,7 @@ Energy = zeros(n,1);
 
 %Main loop
 
-for i = 1:n
+parfor i = 1:n
 
 %Calculates change in pollutant concentrations
 
@@ -90,6 +91,8 @@ for i = 1:n
 end
     
 %Saves the energy, caustic soda, and soda ash required to a file
-xlswrite('CausticSoda_Caustic.xlsx', Caustic);
-xlswrite('CausticSoda_Soda.xlsx', Soda);
-xlswrite('CausticSoda_Energy.xlsx', Energy);
+csvwrite('CausticSoda_Caustic.csv', Caustic);
+csvwrite('CausticSoda_Soda.csv', Soda);
+csvwrite('CausticSoda_Energy.csv', Energy);
+
+toc

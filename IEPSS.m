@@ -13,8 +13,8 @@
 %coefficients (K). Five cations are studied in this experiment - sodium,
 %barium, strontium, calcium, and magnesium.
 
-%clc
-%clear
+clc
+clear
 tic
 
 %% WATER CONSTITUENT FILES
@@ -69,15 +69,15 @@ Sr_limit = 1.71 * 10^(-5) * 2;
 %conditions). n = initial estimate for the number of bed volumes treated
 %(code stops on breakthrough of contaminant at a given level set above). 
 %l = number of data points for each contaminant.
-m = 10; 
-n = 100*m;
+m = 20; 
+n = 10000*m;
 l = 3;
 bed_volumes = zeros(l,1);
 
 
 
 %% SOLVER FUNCTION
-for k=1:l
+parfor k=1:l
     
 %Preallocating resin and water variables and/or filling them with zeroes 
     WATERNa = zeros(n,m);
@@ -160,6 +160,6 @@ end
 
                                                                  
 %Saves the bed volumes, rounded down to the nearest whole number, to a file
-csvwrite('IEPSS_BedVolumes.xlsx', bed_volumes);
+csvwrite('IEPSS_BedVolumes.csv', bed_volumes);
 
 toc
