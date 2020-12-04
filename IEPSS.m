@@ -13,8 +13,9 @@
 %coefficients (K). Five cations are studied in this experiment - sodium,
 %barium, strontium, calcium, and magnesium.
 
-clc
-clear
+%clc
+%clear
+tic
 
 %% WATER CONSTITUENT FILES
 
@@ -33,11 +34,11 @@ Mg_meq=1/24.305;
 Na_meq=1/22.990;
 
 %Converting the contaminant data to milliequivalents
-Ba_Inf = Ba_input * Ba_meq*500; 
-Sr_Inf = Sr_input * Sr_meq*500;
-Ca_Inf = Ca_input * Ca_meq*500;
-Mg_Inf = Mg_input * Mg_meq*500;
-Na_Inf = Na_input * Na_meq*500;
+Ba_Inf = Ba_input * Ba_meq; 
+Sr_Inf = Sr_input * Sr_meq;
+Ca_Inf = Ca_input * Ca_meq;
+Mg_Inf = Mg_input * Mg_meq;
+Na_Inf = Na_input * Na_meq;
 
 %Number of resin sites (meq/L) in each column
 TR = 1000; 
@@ -72,6 +73,8 @@ m = 10;
 n = 100*m;
 l = 3;
 bed_volumes = zeros(l,1);
+
+
 
 %% SOLVER FUNCTION
 for k=1:l
@@ -153,6 +156,10 @@ for k=1:l
     end
 
 end
+
+
                                                                  
 %Saves the bed volumes, rounded down to the nearest whole number, to a file
-xlswrite('IonExchange_BedVolumes.xlsx', bed_volumes);
+csvwrite('IEPSS_BedVolumes.xlsx', bed_volumes);
+
+toc
