@@ -69,8 +69,8 @@ Sr_limit = 1.71 * 10^(-5) * 2;
 %conditions). n = initial estimate for the number of bed volumes treated
 %(code stops on breakthrough of contaminant at a given level set above). 
 %l = number of data points for each contaminant.
-m = 10; 
-n = 100*m;
+m = 15; 
+n = 1000*m;
 l = 6;
 bed_volumes = zeros(l,1);
 
