@@ -17,17 +17,17 @@ load('inefficiency')
 %Defining treatment goals for contaminants (mol/L), solubility constant
 %(Ksp for Ca carbonate used), and the kWh energy required per mol/L of caustic soda (e_fac).
 
-Ca_end = 5 * 10^(-5);
-Mg_end = 4.11 * 10^(-4);
-Ba_end = 1.46 * 10^(-5);
-Sr_end = 1.71 * 10^(-5);
-Ksp    = 3.8 * 10^(-9);
+Ca_end = 1.40 * 10^(-3);
+Mg_end = 6.58 * 10^(-4);
+Ba_end = 0.00 * 10^(-4);
+Sr_end = 2.05 * 10^(-4);
+Ksp = 10^(-8.48);
 e_fac  = 0.159988;
     
 %Setting the number of data points in the files (n) and preallocating
 %vectors
 
-n = 3;
+n = 2;
 Caustic = zeros(n,1);
 Soda = zeros(n,1);
 Energy = zeros(n,1);

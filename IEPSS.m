@@ -13,13 +13,13 @@
 %coefficients (K). Five cations are studied in this experiment - sodium,
 %barium, strontium, calcium, and magnesium.
 
-clc
-clear
+%clc
+%clear
 tic
 
 %% WATER CONSTITUENT FILES
 
-%Loading the contaminant data (mol/L)
+%Loading the contaminant data (mg/L)
 load('Ba_input')
 load('Sr_input')
 load('Ca_input')
@@ -27,11 +27,11 @@ load('Mg_input')
 load('Na_input')
 
 %=Milliequilavent conversion factors
-Ba_meq=2/137.33;
-Sr_meq=2/87.62;
-Ca_meq=2/40.078;
-Mg_meq=1/24.305;
-Na_meq=1/22.990;
+Ba_meq = 2/137.33;
+Sr_meq = 2/87.62;
+Ca_meq = 2/40.078;
+Mg_meq = 1/24.305;
+Na_meq = 1/22.990;
 
 %Converting the contaminant data to milliequivalents
 Ba_Inf = Ba_input * Ba_meq; 
@@ -41,7 +41,7 @@ Mg_Inf = Mg_input * Mg_meq;
 Na_Inf = Na_input * Na_meq;
 
 %Number of resin sites (meq/L) in each column
-TR = 1000; 
+TR = 208; 
 
 %Equilibrium constant (K) value between barium and sodium (KBS), strontium
 %and sodium (KSN), calcium and sodium (KCN), and magnesium and sodium (KMN)
@@ -51,7 +51,7 @@ KSN = 0.32;
 KCN = 0.30;
 KMN = 0.23; 
 
-%Equilibrium constant (K) value between barium and sodium (KBS), strontium
+%Equilibrium constant (K) value between barium and sodium (KBN), strontium
 %and sodium (KSN), calcium and sodium (KCN), and magnesium and sodium (KMN)
 %for PAA
 %KBN = 0.; 
@@ -69,15 +69,15 @@ Sr_limit = 1.71 * 10^(-5) * 2;
 %conditions). n = initial estimate for the number of bed volumes treated
 %(code stops on breakthrough of contaminant at a given level set above). 
 %l = number of data points for each contaminant.
-m = 15; 
-n = 1000*m;
-l = 6;
+m = 10; 
+n = 10000*m;
+l = 1;
 bed_volumes = zeros(l,1);
 
 
 
 %% SOLVER FUNCTION
-parfor k=1:l
+for k=1:l
     
 %Preallocating resin and water variables and/or filling them with zeroes 
     WATERNa = zeros(n,m);
@@ -152,7 +152,7 @@ parfor k=1:l
              end 
             
 %Stores the number of bed volumes completed             
-            bed_volumes(k,1) = floor(i/m);
+            bed_volumes(k,1) = floor(i/m)
     end
 
 end

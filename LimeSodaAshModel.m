@@ -21,7 +21,7 @@ load('inefficiency')
 Ca_end = 5 * 10^(-5);
 Mg_end = 4.11 * 10^(-4);
 Ba_end = 1.46 * 10^(-5);
-Ksp = 3.8 * 10^(-9);
+Ksp = 10^(-8.48);
 
 %Setting the number of data points in the files (n) and preallocating
 %vectors

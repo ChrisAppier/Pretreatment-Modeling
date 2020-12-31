@@ -19,17 +19,17 @@ load('inefficiency')
 %(Ksp for Ba sulfate used), and the Ba:Sr co-precipitation ratio (barium removed
 %per strontium
 
-Ba_end = 1.46 * 10^(-5);
-Sr_end = 1.71 * 10^(-5);
-Ca_end = 5 * 10^(-5);
-Mg_end = 4.11 * 10^(-4);
+Ba_end = 2.62 * 10^(-5);
+Sr_end = 1.80 * 10^(-2);
+Ca_end = 0.00 * 10^(-5);
+Mg_end = 3.20 * 10^(-4);
 s = 5.67;
-Ksp = 1.1 * 10^(-10);
+Ksp = 10^(-9.98);
 
 %Setting the number of data points in the files (n) and preallocating
 %vectors
 
-n = 3;
+n = 2;
 Sulfate = zeros(n,1);
 ba_add = zeros(n,1);
 
@@ -68,6 +68,10 @@ parfor i = 1:n
 end
 
 %Main loop for Ca and Mg removal
+
+%Setting solubility product constant for lime soda ash modeling
+
+Ksp = 10^(-8.48);
 
 parfor i = 1:n
 
