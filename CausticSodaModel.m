@@ -17,24 +17,24 @@ load('inefficiency')
 %Defining treatment goals for contaminants (mol/L), solubility constant
 %(Ksp for Ca carbonate used), and the kWh energy required per mol/L of caustic soda (e_fac).
 
-Ca_end = 1.40 * 10^(-3);
-Mg_end = 6.58 * 10^(-4);
-Ba_end = 0.00 * 10^(-4);
-Sr_end = 2.05 * 10^(-4);
+Ca_end = 4.37 * 10^(-4);
+Mg_end = 8.23 * 10^(-4);
+Ba_end = 4.00 * 10^(-4);
+Sr_end = 3.14 * 10^(-4);
 Ksp = 10^(-8.48);
 e_fac  = 0.159988;
     
 %Setting the number of data points in the files (n) and preallocating
 %vectors
 
-n = 2;
+n = 5;
 Caustic = zeros(n,1);
 Soda = zeros(n,1);
 Energy = zeros(n,1);
 
 %Main loop
 
-parfor i = 1:n
+for i = 1:n
 
 %Calculates change in pollutant concentrations
 
@@ -84,9 +84,9 @@ parfor i = 1:n
     
 %Converts caustic soda and soda ash to g/m^3
 
-    Caustic(i,1) = Caustic(i,1) * 1000 * 39.9971;
+    %Caustic(i,1) = Caustic(i,1) * 1000 * 39.9971;
     
-    Soda(i,1) = Soda(i,1) * 1000 * 105.9888; %molar mass is for anhydrous
+    %Soda(i,1) = Soda(i,1) * 1000 * 105.9888; %molar mass is for anhydrous
 
 end
     

@@ -13,13 +13,13 @@
 %coefficients (K). Five cations are studied in this experiment - sodium,
 %barium, strontium, calcium, and magnesium.
 
-%clc
-%clear
+clc
+clear
 tic
 
 %% WATER CONSTITUENT FILES
 
-%Loading the contaminant data (mg/L)
+%Loading the contaminant data (mol/L)
 load('Ba_input')
 load('Sr_input')
 load('Ca_input')
@@ -27,11 +27,11 @@ load('Mg_input')
 load('Na_input')
 
 %=Milliequilavent conversion factors
-Ba_meq = 2/137.33;
-Sr_meq = 2/87.62;
-Ca_meq = 2/40.078;
-Mg_meq = 1/24.305;
-Na_meq = 1/22.990;
+Ba_meq = 2;
+Sr_meq = 2;
+Ca_meq = 2;
+Mg_meq = 1;
+Na_meq = 1;
 
 %Converting the contaminant data to milliequivalents
 Ba_Inf = Ba_input * Ba_meq; 
@@ -51,15 +51,7 @@ KSN = 0.32;
 KCN = 0.30;
 KMN = 0.23; 
 
-%Equilibrium constant (K) value between barium and sodium (KBN), strontium
-%and sodium (KSN), calcium and sodium (KCN), and magnesium and sodium (KMN)
-%for PAA
-%KBN = 0.; 
-%KSN = 0.; 
-%KCN = 0.;
-%KMN = 0.; 
-
-%Contaminant limits (meq/L) (CHECK THESE)
+%Contaminant limits (meq/L)
 Ca_limit = 5 * 10^(-4) * 2;
 Mg_limit = 4.11 * 10^(-4) * 2;
 Ba_limit = 1.46 * 10^(-5) * 2;
@@ -152,12 +144,13 @@ for k=1:l
              end 
             
 %Stores the number of bed volumes completed             
-            bed_volumes(k,1) = floor(i/m)
+            bed_volumes(k,1) = floor(i/m);
     end
 
 end
 
-
+%Outputting final answer to command window
+BV = bed_volumes(k,1)
                                                                  
 %Saves the bed volumes, rounded down to the nearest whole number, to a file
 csvwrite('IEPSS_BedVolumes.csv', bed_volumes);

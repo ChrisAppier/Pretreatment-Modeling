@@ -18,15 +18,15 @@ load('inefficiency')
 %Defining treatment goals for contaminants (end), solubility constant
 %(Ksp for Ca carbonate used)
 
-Ca_end = 5 * 10^(-5);
-Mg_end = 4.11 * 10^(-4);
-Ba_end = 1.46 * 10^(-5);
+Ba_end = 0 * 10^(-5);
+Ca_end = 6.363 * 10^(-4);
+Mg_end = 8.091 * 10^(-4);
 Ksp = 10^(-8.48);
 
 %Setting the number of data points in the files (n) and preallocating
 %vectors
 
-n = 3;
+n = 2;
 Lime = zeros(n:1);
 Soda = zeros(n:1);
 Sr_end = zeros(n:1);

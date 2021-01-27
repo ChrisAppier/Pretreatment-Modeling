@@ -21,21 +21,21 @@ load('inefficiency')
 
 Ba_end = 2.62 * 10^(-5);
 Sr_end = 1.80 * 10^(-2);
-Ca_end = 0.00 * 10^(-5);
-Mg_end = 3.20 * 10^(-4);
+Ca_end = 1.22 * 10^(-1);
+Mg_end = 5.76 * 10^(-2);
 s = 5.67;
 Ksp = 10^(-9.98);
 
 %Setting the number of data points in the files (n) and preallocating
 %vectors
 
-n = 2;
+n = 1;
 Sulfate = zeros(n,1);
 ba_add = zeros(n,1);
 
 %Main loop for Ba and Sr removal
 
-parfor i = 1:n
+for i = 1:n
 
 %Calculates change in pollutant concentrations
 
@@ -63,7 +63,7 @@ parfor i = 1:n
     
 %Converts lime and soda ash to g/m^3
 
-    Sulfate(i,1) = Sulfate(i,1) * 1000 * 142.04; %Molar mass as sodium sulfate
+    %Sulfate(i,1) = Sulfate(i,1) * 1000 * 142.04; %Molar mass as sodium sulfate
     
 end
 
@@ -73,7 +73,7 @@ end
 
 Ksp = 10^(-8.48);
 
-parfor i = 1:n
+for i = 1:n
 
 %Calculates change in pollutant concentrations
 
