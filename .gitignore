@@ -8,3 +8,5 @@ IonExchange_BedVolumes.csv
 *.csv
 *.csv
 test.m
+*.mat
+waterdata.xlsx
