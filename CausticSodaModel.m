@@ -32,6 +32,12 @@ Caustic = zeros(n,1);
 Soda = zeros(n,1);
 Energy = zeros(n,1);
 
+%Generating a uniform distribution for the "inefficiency factor" found by
+%comparing experimental data to model results
+
+caustic_inefficiency = uni_dist(n, 1.64, 2.13);
+soda_inefficiency = uni_dist(n, 0.77, 1.80);
+
 %Main loop
 
 for i = 1:n
@@ -76,17 +82,17 @@ for i = 1:n
 %Calculates the amount of caustic soda, soda ash required, and energy
 %required
 
-    Caustic(i,1) = 2*CCa + 4*CMg + 2*NCMg + (Ksp / Ca_end);
+    Caustic(i,1) = 2*CCa + 4*CMg + 2*NCMg + (Ksp / Ca_end) .* caustic_inefficiency(1,i);
 
-    Soda(i,1) = NCCa;
+    Soda(i,1) = NCCa .* soda_inefficiency(1,i);
     
     Energy(i,1) = Caustic(i,1) * e_fac;
     
 %Converts caustic soda and soda ash to g/m^3
 
-    %Caustic(i,1) = Caustic(i,1) * 1000 * 39.9971;
+    Caustic(i,1) = Caustic(i,1) * 1000 * 39.9971;
     
-    %Soda(i,1) = Soda(i,1) * 1000 * 105.9888; %molar mass is for anhydrous
+    Soda(i,1) = Soda(i,1) * 1000 * 105.9888; %molar mass is for anhydrous
 
 end
     

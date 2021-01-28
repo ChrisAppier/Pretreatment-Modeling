@@ -13,7 +13,6 @@ load('Mg_input')
 load('Ba_input')
 load('Sr_input')
 load('Alk_input')
-load('inefficiency')
 
 %Defining treatment goals for contaminants (end), solubility constant
 %(Ksp for Ca carbonate used)
@@ -30,6 +29,12 @@ n = 2;
 Lime = zeros(n:1);
 Soda = zeros(n:1);
 Sr_end = zeros(n:1);
+
+%Generating a uniform distribution for the "inefficiency factor" found by
+%comparing experimental data to model results
+
+lime_inefficiency = uni_dist(n, 1.46, 1.88);
+soda_inefficiency = uni_dist(n, ); %Need to find #s for soda ash!!
 
 %Main loop
 
@@ -75,9 +80,9 @@ for i = 1:n
 
 %Calculates the amount of lime and soda ash required
 
-    Lime(i,1) = CCa + 2*CMg + NCMg + (Ksp / Ca_end);
+    Lime(i,1) = CCa + 2*CMg + NCMg + (Ksp / Ca_end) .* lime_inefficiency(1,i);
 
-    Soda(i,1) = NCCa + NCMg;
+    Soda(i,1) = NCCa + NCMg .* soda_inefficiency(1,i);
     
 %Converts lime and soda ash to g/m^3
 

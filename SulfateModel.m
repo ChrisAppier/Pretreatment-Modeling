@@ -13,7 +13,6 @@ load('Sr_input')
 load('Ca_input')
 load('Mg_input')
 load('Alk_input')
-load('inefficiency')
 
 %%Defining treatment goals for contaminants (end), solubility constant
 %(Ksp for Ba sulfate used), and the Ba:Sr co-precipitation ratio (barium removed
@@ -32,6 +31,13 @@ Ksp = 10^(-9.98);
 n = 1;
 Sulfate = zeros(n,1);
 ba_add = zeros(n,1);
+
+%Generating a uniform distribution for the "inefficiency factor" found by
+%comparing experimental data to model results
+
+sulfate_inefficiency = uni_dist(n, 1.80, 5.77);
+lime_inefficiency = uni_dist(n, 1.46, 1.88);
+soda_inefficiency = uni_dist(n, ); %Need to find #s for soda ash!!
 
 %Main loop for Ba and Sr removal
 
@@ -59,7 +65,7 @@ for i = 1:n
 
 %Calculates the sulfate required to remove the Ba and Sr
 
-    Sulfate(i,1) = ((Ksp / Ba_end) + Sr + Ba) .* inefficiency(1,i);
+    Sulfate(i,1) = ((Ksp / Ba_end) + Sr + Ba) .* sulfate_inefficiency(1,i);
     
 %Converts lime and soda ash to g/m^3
 
@@ -109,9 +115,9 @@ for i = 1:n
 
 %Calculates the amount of lime and soda ash required
 
-    Lime(i,1) = CCa + 2*CMg + NCMg + (Ksp / Ca_end);
+    Lime(i,1) = CCa + 2*CMg + NCMg + (Ksp / Ca_end) .* lime_inefficiency(1,i);
 
-    Soda(i,1) = NCCa + NCMg;
+    Soda(i,1) = NCCa + NCMg .* soda_inefficiency(1,i);
     
 %Converts lime and soda ash to g/m^3
 
