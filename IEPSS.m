@@ -16,6 +16,7 @@
 clc
 clear
 tic
+warning('off', 'all')
 
 %% WATER CONSTITUENT FILES
 
@@ -52,24 +53,22 @@ KCN = 0.30;
 KMN = 0.23; 
 
 %Contaminant limits (meq/L)
-Ca_limit = 5 * 10^(-4) * 2;
-Mg_limit = 4.11 * 10^(-4) * 2;
-Ba_limit = 1.46 * 10^(-5) * 2;
-Sr_limit = 1.71 * 10^(-5) * 2;
+Ca_limit = 8.234 * 10^(-3) * 2;
+Mg_limit = 6.418 * 10^(-3) * 2;
+Ba_limit = 1.566 * 10^(-4) * 2;
+Sr_limit = 9.130 * 10^(-5) * 2;
 
 %m = number of segments the column is divided into + 1 (for initial
 %conditions). n = initial estimate for the number of bed volumes treated
 %(code stops on breakthrough of contaminant at a given level set above). 
 %l = number of data points for each contaminant.
-m = 10; 
-n = 10000*m;
+m = 100;
+n = 150*m;
 l = 1;
 bed_volumes = zeros(l,1);
 
-
-
 %% SOLVER FUNCTION
-for k=1:l
+parfor k=1:l
     
 %Preallocating resin and water variables and/or filling them with zeroes 
     WATERNa = zeros(n,m);
@@ -149,8 +148,10 @@ for k=1:l
 
 end
 
+%% Output
+
 %Outputting final answer to command window
-BV = bed_volumes(k,1)
+BV = bed_volumes
                                                                  
 %Saves the bed volumes, rounded down to the nearest whole number, to a file
 csvwrite('IEPSS_BedVolumes.csv', bed_volumes);

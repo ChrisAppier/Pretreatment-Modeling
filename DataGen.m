@@ -27,9 +27,22 @@ save Mg_input.mat Mg_input;
 save Na_input.mat Na_input;
 save Alk_input.mat Alk_input;
 
-subplot(2,3,1); histogram(Ba_input); title('Barium');
-subplot(2,3,2); histogram(Sr_input); title('Strontium');
-subplot(2,3,3); histogram(Ca_input); title('Calcium');
-subplot(2,3,4); histogram(Mg_input); title('Magnesium');
-subplot(2,3,5); histogram(Na_input); title('Sodium');
-subplot(2,3,6); histogram(Alk_input); title('Alkalinity');
+
+%Plotting the original and generated data sets
+nbin = 100;
+
+figure
+subplot(2,3,1); histogram(Ba_input, nbin); title('Barium Generated');
+subplot(2,3,2); histogram(Sr_input, nbin); title('Strontium Generated');
+subplot(2,3,3); histogram(Ca_input, nbin); title('Calcium Generated');
+subplot(2,3,4); histogram(Mg_input, nbin); title('Magnesium Generated');
+subplot(2,3,5); histogram(Na_input, nbin); title('Sodium Generated');
+subplot(2,3,6); histogram(Alk_input, nbin); title('Alkalinity Generated');
+
+figure
+subplot(2,3,1); histogram(Ba_sample, nbin); title('Barium Original');
+subplot(2,3,2); histogram(Sr_sample, nbin); title('Strontium Original');
+subplot(2,3,3); histogram(Ca_sample, nbin); title('Calcium Original');
+subplot(2,3,4); histogram(Mg_sample, nbin); title('Magnesium Original');
+subplot(2,3,5); histogram(Na_sample, nbin); title('Sodium Original');
+subplot(2,3,6); histogram(Alk_sample, nbin); title('Alkalinity Original');
