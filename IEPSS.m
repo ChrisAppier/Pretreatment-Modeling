@@ -67,10 +67,10 @@ Sr_limit = 9.130 * 10^(-5) * Sr_meq;
 %Sr_limit = 1.664 * 10^(-2) * Sr_meq;
 
 %Outputting the overall change in contaminants in meq/L for debugging
-Ca_change = Ca_Inf - Ca_limit;
-Ba_change = Ba_Inf - Ba_limit;
-Mg_change = Mg_Inf - Mg_limit;
-Sr_change = Sr_Inf - Sr_limit;
+%Ca_change = Ca_Inf - Ca_limit
+%Ba_change = Ba_Inf - Ba_limit
+%Mg_change = Mg_Inf - Mg_limit
+%Sr_change = Sr_Inf - Sr_limit
 
 %m = number of segments the column is divided into + 1 (for initial
 %conditions). n = initial estimate for the number of bed volumes treated
