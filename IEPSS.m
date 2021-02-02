@@ -63,7 +63,7 @@ Sr_limit = 9.130 * 10^(-5) * Sr_meq;
 %value of the contaminant_input.mat variables]
 %Ca_limit = 1.153 * 10^(-1) * Ca_meq;
 %Mg_limit = 5.925 * 10^(-2) * Mg_meq;
-%Ba_limit = 1.000 * 10^(14) * Ba_meq;
+%Ba_limit = 1.000 * 10^(-1) * Ba_meq; 
 %Sr_limit = 1.664 * 10^(-2) * Sr_meq;
 
 %Outputting the overall change in contaminants in meq/L for debugging
@@ -188,11 +188,11 @@ end
 %% Output
 
 %Outputting final answer to command window
-mBV = bed_volumes
+mBV = bed_volumes(l,1)
 
 %Plotting initial water packet pollutant concentrations moving through the
 %column number set below
-col_num = 1;
+col_num = 1; %Set equal to mBV to see the last column
 for i = 1:m
     Ba(i,1) = WATERBa(col_num,i);
     Sr(i,1) = WATERSr(col_num,i);
@@ -226,11 +226,11 @@ for i = 1:n
 end
 
 figure
-subplot(1,5,1); plot(column, Ba_final, column, Ba_lim, '--', 'Linewidth', 2.0); title('Ba (aq)'); ylim([0 1.1*max(Ba_final)]); xlim([0 mBV(l,1)+1]);  xlabel('BV * m'); ylabel('Concentration [meq/L]');
-subplot(1,5,2); plot(column, Sr_final, column, Sr_lim, '--', 'Linewidth', 2.0); title('Sr (aq)'); ylim([0 1.1*max(Sr_final)]); xlim([0 mBV(l,1)+1]);xlabel('BV * m'); ylabel('Concentration [meq/L]');
-subplot(1,5,3); plot(column, Ca_final, column, Ca_lim, '--', 'Linewidth', 2.0); title('Ca (aq)'); ylim([0 1.1*max(Ca_final)]); xlim([0 mBV(l,1)+1]);xlabel('BV * m'); ylabel('Concentration [meq/L]');
-subplot(1,5,4); plot(column, Mg_final, column, Mg_lim, '--', 'Linewidth', 2.0); title('Mg (aq)'); ylim([0 1.1*max(Mg_final)]); xlim([0 mBV(l,1)+1]);xlabel('BV * m'); ylabel('Concentration [meq/L]');
-subplot(1,5,5); plot(Na_final, 'Linewidth', 2.0); title('Na (aq)', 'Linewidth', 2.0); xlim([0 mBV(l,1)+1]);xlabel('BV * m'); ylabel('Concentration [meq/L]');
+subplot(1,5,1); plot(column, Ba_final, column, Ba_lim, '--', 'Linewidth', 2.0); title('Ba (aq)'); ylim([0 1.1*max(Ba_final)]); xlim([0 mBV+1]);  xlabel('BV * m'); ylabel('Concentration [meq/L]');
+subplot(1,5,2); plot(column, Sr_final, column, Sr_lim, '--', 'Linewidth', 2.0); title('Sr (aq)'); ylim([0 1.1*max(Sr_final)]); xlim([0 mBV+1]);xlabel('BV * m'); ylabel('Concentration [meq/L]');
+subplot(1,5,3); plot(column, Ca_final, column, Ca_lim, '--', 'Linewidth', 2.0); title('Ca (aq)'); ylim([0 1.1*max(Ca_final)]); xlim([0 mBV+1]);xlabel('BV * m'); ylabel('Concentration [meq/L]');
+subplot(1,5,4); plot(column, Mg_final, column, Mg_lim, '--', 'Linewidth', 2.0); title('Mg (aq)'); ylim([0 1.1*max(Mg_final)]); xlim([0 mBV+1]);xlabel('BV * m'); ylabel('Concentration [meq/L]');
+subplot(1,5,5); plot(Na_final, 'Linewidth', 2.0); title('Na (aq)', 'Linewidth', 2.0); xlim([0 mBV+1]);xlabel('BV * m'); ylabel('Concentration [meq/L]');
 
 %Saving water and resin matrices to file for debug
 %csvwrite('Ca_Water_Matrix.csv', WATERCa);
