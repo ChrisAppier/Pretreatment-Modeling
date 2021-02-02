@@ -52,25 +52,21 @@ KSN = 0.32;
 KCN = 0.30;
 KMN = 0.23; 
 
-%Contaminant limits (meq/L) (Condition 1)
+%Contaminant limits (meq/L) (Condition 1) [This corresponds to the first
+%value of the contaminant_input.mat variables]
 Ca_limit = 8.234 * 10^(-3) * Ca_meq;
 Mg_limit = 6.418 * 10^(-3) * Mg_meq;
 Ba_limit = 1.566 * 10^(-4) * Ba_meq;
 Sr_limit = 9.130 * 10^(-5) * Sr_meq;
 
-%Contaminant limits (meq/L) (Condition 2)
+%Contaminant limits (meq/L) (Condition 2) [This corresponds to the second
+%value of the contaminant_input.mat variables]
 %Ca_limit = 1.153 * 10^(-1) * Ca_meq;
 %Mg_limit = 5.925 * 10^(-2) * Mg_meq;
 %Ba_limit = 1.000 * 10^(14) * Ba_meq;
 %Sr_limit = 1.664 * 10^(-2) * Sr_meq;
 
-%Contaminant limits (meq/L) (Condition 3)
-%Ca_limit = 1.347 * 10^(-2) * Ca_meq;
-%Mg_limit = 8.825 * 10^(-3) * Mg_meq;
-%Ba_limit = 1.000 * 10^(14) * Ba_meq;
-%Sr_limit = 1.826 * 10^(-5) * Sr_meq;
-
-%Debug
+%Outputting the overall change in contaminants in meq/L for debugging
 Ca_change = Ca_Inf - Ca_limit;
 Ba_change = Ba_Inf - Ba_limit;
 Mg_change = Mg_Inf - Mg_limit;
@@ -81,8 +77,8 @@ Sr_change = Sr_Inf - Sr_limit;
 %(code stops on breakthrough of contaminant at a given level set above). 
 %l = number of data points for each contaminant.
 m = 100;
-n = m*2;
-l = 1;
+n = m*20;
+l = 1; %Change this to 2 to use contaminant limits condition 2
 bed_volumes = zeros(l,1);
 
 %% SOLVER FUNCTION
@@ -101,7 +97,7 @@ for k=l:l
     RESINMg = zeros(n,m);
     
     for i=1:n
-        i = i
+        i = i %outputting BV*m while running for debugging and impatience
         for j=1:m
 %Initial condition of virgin resin (preloaded with Na)                                               
             RESINNa(1,1:m) = TR;
@@ -129,6 +125,8 @@ for k=l:l
             WCa = WATERCa(i,j);
             WMg = WATERMg(i,j);
        
+%Solving the system of linear equations
+            
             set0=[RNa;RBa;RSr;RCa;RMg;WNa;WBa;WSr;WCa;WMg];
 
             TNa = RNa + WNa;
@@ -142,6 +140,8 @@ for k=l:l
 
             [set] = fsolve(f,set0,options);
 
+%Assigning the new values calculated above
+            
             RESINNa(i+1,j) = set(1);
             RESINBa(i+1,j) = set(2);
             RESINSr(i+1,j) = set(3);
@@ -155,30 +155,24 @@ for k=l:l
             
         end
         
-%Ends the modeling if one of the contaminants is above the set limit
+%Ends the modeling if one of the contaminants is above the set limit and
+%announces the concentration
              %if WBa > Ba_limit || WSr > Sr_limit || WCa > Ca_limit || WMg > Mg_limit
                   %break
-             %end 
-             
+             %end              
              if WBa > Ba_limit
                  disp('Ba =')
                  disp(WBa)
                  break
-             end
-             
-             if WCa > Ca_limit
+             elseif WCa > Ca_limit
                  disp('Ca =')
                  disp(WCa)
                  break
-             end
-            
-             if WSr > Sr_limit
+             elseif WSr > Sr_limit
                  disp('Sr =')
                  disp(WSr)
                  break
-             end
-             
-             if WMg > Mg_limit
+             elseif WMg > Mg_limit
                  disp('Ba =')
                  disp(WMg)
                  break
@@ -186,7 +180,7 @@ for k=l:l
              
 %Stores the number of bed volumes completed             
             %bed_volumes(k,1) = floor(i/m);
-            bed_volumes(k,1) = i;         
+            bed_volumes(k,1) = i; %this should be divided by m, but I have removed the m for debugging         
     end
 
 end
@@ -196,13 +190,15 @@ end
 %Outputting final answer to command window
 mBV = bed_volumes
 
-%Plotting initial water packet pollutant concentrations moving through the first column
+%Plotting initial water packet pollutant concentrations moving through the
+%column number set below
+col_num = 1;
 for i = 1:m
-    Ba(i,1) = WATERBa(l,i);
-    Sr(i,1) = WATERSr(l,i);
-    Ca(i,1) = WATERCa(l,i);
-    Mg(i,1) = WATERMg(l,i);
-    Na(i,1) = WATERNa(l,i);
+    Ba(i,1) = WATERBa(col_num,i);
+    Sr(i,1) = WATERSr(col_num,i);
+    Ca(i,1) = WATERCa(col_num,i);
+    Mg(i,1) = WATERMg(col_num,i);
+    Na(i,1) = WATERNa(col_num,i);
 end
 
 figure
@@ -212,7 +208,8 @@ subplot(1,5,3); plot(Ca, 'Linewidth', 2.0); title('Ca (aq)'); xlabel('Segments')
 subplot(1,5,4); plot(Mg, 'Linewidth', 2.0); title('Mg (aq)'); xlabel('Segments'); ylabel('Concentration [meq/L]');
 subplot(1,5,5); plot(Na, 'Linewidth', 2.0); title('Na (aq)'); xlabel('Segments'); ylabel('Concentration [meq/L]');
 
-%Plotting the final water concentrations after each column
+%Plotting the water concentrations after each column and the concentration
+%limits
 for i = 1:n
     Ba_final(i) = WATERBa(i,m);
     Sr_final(i) = WATERSr(i,m);
@@ -235,10 +232,19 @@ subplot(1,5,3); plot(column, Ca_final, column, Ca_lim, '--', 'Linewidth', 2.0); 
 subplot(1,5,4); plot(column, Mg_final, column, Mg_lim, '--', 'Linewidth', 2.0); title('Mg (aq)'); ylim([0 1.1*max(Mg_final)]); xlim([0 mBV(l,1)+1]);xlabel('BV * m'); ylabel('Concentration [meq/L]');
 subplot(1,5,5); plot(Na_final, 'Linewidth', 2.0); title('Na (aq)', 'Linewidth', 2.0); xlim([0 mBV(l,1)+1]);xlabel('BV * m'); ylabel('Concentration [meq/L]');
 
-%Saving water matrices to file for debug
+%Saving water and resin matrices to file for debug
 %csvwrite('Ca_Water_Matrix.csv', WATERCa);
+%csvwrite('Ba_Water_Matrix.csv', WATERBa);
+%csvwrite('Na_Water_Matrix.csv', WATERNa);
+%csvwrite('Sr_Water_Matrix.csv', WATERSr);
+%csvwrite('Mg_Water_Matrix.csv', WATERMg);
+%csvwrite('Ca_Resin_Matrix.csv', RESINCa);
+%csvwrite('Ba_Resin_Matrix.csv', RESINBa);
+%csvwrite('Na_Resin_Matrix.csv', RESINNa);
+%csvwrite('Sr_Resin_Matrix.csv', RESINSr);
+%csvwrite('Mg_Resin_Matrix.csv', RESINMg);
                                                                  
 %Saves the bed volumes, rounded down to the nearest whole number, to a file
-csvwrite('IEPSS_BedVolumes.csv', bed_volumes);
+%csvwrite('IEPSS_BedVolumes.csv', bed_volumes);
 
 toc
