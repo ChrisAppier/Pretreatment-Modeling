@@ -3,7 +3,7 @@
 
 clc
 
-%Loading alkalinity data calculted using a script
+%Loading alkalinity data calculated using a script
 load('Alk_data')
 
 %Importing the USGS water data
@@ -14,8 +14,11 @@ Mg_sample = xlsread('waterdata.xlsx','AQ3:AQ2740');
 Na_sample = xlsread('waterdata.xlsx','AU3:AU2614');
 Alk_sample = Alk_data;
 
-%Converting the data from mg/L to M
-
+%Converting the data from mg/L to mol/L
+Ba_sample = Ba_sample / (1000 * 137.33);
+Ca_sample = Ca_sample / (1000 * 40.078);
+Sr_sample = Sr_sample / (1000 * 87.62);
+Mg_sample = Mg_sample / (1000 * 24.305);
 
 %Creating distributions based on the USGS water data
 Ba_input = lhs_empir(Ba_sample, 10000);
