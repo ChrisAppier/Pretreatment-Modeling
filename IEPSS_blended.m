@@ -155,26 +155,36 @@ for k=l:l
             
         end
         
+%Calculating the average contaminant levels of all of the treated water        
+            Ba_avg_temp = mean(WATERBa);
+            Ba_avg(i) = Ba_avg_temp(1,m) * (n/i); %(n/i) accounts for pre-filled zeros
+            Ca_avg_temp = mean(WATERCa);
+            Ca_avg(i) = Ca_avg_temp(1,m) * (n/i);
+            Sr_avg_temp = mean(WATERSr);
+            Sr_avg(i) = Sr_avg_temp(1,m) * (n/i);
+            Mg_avg_temp = mean(WATERMg);
+            Mg_avg(i) = Mg_avg_temp(1,m) * (n/i);
+            
 %Ends the modeling if one of the contaminants is above the set limit and
 %announces the concentration
             %if WBa > Ba_limit || WSr > Sr_limit || WCa > Ca_limit || WMg > Mg_limit
                  %break
             %end              
-            if WBa > Ba_limit
+            if Ba_avg(i) > Ba_limit
                 disp('Ba =')
-                disp(WBa)
+                disp(Ba_avg(i))
                 break
-            elseif WCa > Ca_limit
+            elseif Ca_avg(i) > Ca_limit
                 disp('Ca =')
-                disp(WCa)
+                disp(Ca_avg(i))
                 break
-            elseif WSr > Sr_limit
+            elseif Sr_avg(i) > Sr_limit
                 disp('Sr =')
-                disp(WSr)
+                disp(Sr_avg(i))
                 break
-            elseif WMg > Mg_limit
+            elseif Mg_avg(i) > Mg_limit
                 disp('Ba =')
-                disp(WMg)
+                disp(Mg_avg(i))
                 break
             end
              
@@ -231,6 +241,13 @@ subplot(1,5,2); plot(column, Sr_final, column, Sr_lim, '--', 'Linewidth', 2.0); 
 subplot(1,5,3); plot(column, Ca_final, column, Ca_lim, '--', 'Linewidth', 2.0); title('Ca (aq)'); ylim([0 1.1*max(Ca_final)]); xlim([0 mBV+1]);xlabel('BV * m'); ylabel('Concentration [meq/L]');
 subplot(1,5,4); plot(column, Mg_final, column, Mg_lim, '--', 'Linewidth', 2.0); title('Mg (aq)'); ylim([0 1.1*max(Mg_final)]); xlim([0 mBV+1]);xlabel('BV * m'); ylabel('Concentration [meq/L]');
 subplot(1,5,5); plot(Na_final, 'Linewidth', 2.0); title('Na (aq)', 'Linewidth', 2.0); xlim([0 mBV+1]);xlabel('BV * m'); ylabel('Concentration [meq/L]');
+
+%Plotting the average pollutant concentration in all treated water
+figure
+subplot(1,4,1); plot(column,Ba_avg, column, Ba_lim, '--', 'Linewidth', 2.0); title('Avg Ba (aq)'); xlim([0 mBV+1]);
+subplot(1,4,2); plot(column,Sr_avg, column, Sr_lim, '--', 'Linewidth', 2.0); title('Avg Sr (aq)'); xlim([0 mBV+1]);
+subplot(1,4,3); plot(column,Ca_avg, column, Ca_lim, '--', 'Linewidth', 2.0); title('Avg Ca (aq)'); xlim([0 mBV+1]);
+subplot(1,4,4); plot(column,Mg_avg, column, Mg_lim, '--', 'Linewidth', 2.0); title('Avg Mg (aq)'); xlim([0 mBV+1]);
 
 %Saving water and resin matrices to file for debug
 %csvwrite('Ca_Water_Matrix.csv', WATERCa);
