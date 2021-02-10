@@ -42,7 +42,7 @@ Mg_Inf = Mg_input * Mg_meq;
 Na_Inf = Na_input * Na_meq;
 
 %Number of resin sites (meq/L) in each column
-TR = 385; 
+TR = 4325; 
 
 %Equilibrium constant (K) value between barium and sodium (KBS), strontium
 %and sodium (KSN), calcium and sodium (KCN), and magnesium and sodium (KMN)
@@ -50,7 +50,14 @@ TR = 385;
 KBN = 0.45; 
 KSN = 0.32; 
 KCN = 0.30;
-KMN = 0.23; 
+KMN = 0.23; %literature value
+
+%KMN = 0.6; %value to make condition 2 match exp results closely
+
+KBN = 5.41; %values obtained from DuPont 
+KSN = 2.62; 
+KCN = 1.89;
+KMN = 1.48;
 
 %Contaminant limits (meq/L) (Condition 1) [This corresponds to the first
 %value of the contaminant_input.mat variables]
@@ -66,25 +73,19 @@ Sr_limit = 9.130 * 10^(-5) * Sr_meq;
 %Ba_limit = 1.000 * 10^(-1) * Ba_meq; 
 %Sr_limit = 1.664 * 10^(-2) * Sr_meq;
 
-%Outputting the overall change in contaminants in meq/L for debugging
-%Ca_change = Ca_Inf - Ca_limit
-%Ba_change = Ba_Inf - Ba_limit
-%Mg_change = Mg_Inf - Mg_limit
-%Sr_change = Sr_Inf - Sr_limit
-
 %m = number of segments the column is divided into + 1 (for initial
 %conditions). n = initial estimate for the number of bed volumes treated
 %(code stops on breakthrough of contaminant at a given level set above). 
 %l = number of data points for each contaminant.
-m = 100;
-n = m*20;
+m = 20;
+n = m*50;
 l = 1; %Change this to 2 to use contaminant limits condition 2
 bed_volumes = zeros(l,1);
 
 %% SOLVER FUNCTION
 for k=l:l
     
-%Preallocating resin and water variables and/or filling them with zeroes 
+%Preallocating/resetting resin and water variables and filling them with zeroes 
     WATERNa = zeros(n,m);
     WATERBa = zeros(n,m);
     WATERSr = zeros(n,m);
@@ -95,9 +96,13 @@ for k=l:l
     RESINSr = zeros(n,m);
     RESINCa = zeros(n,m);
     RESINMg = zeros(n,m);
+    Ba_avg = zeros(1,n);
+    Sr_avg = zeros(1,n);
+    Ca_avg = zeros(1,n);
+    Mg_avg = zeros(1,n);
             
     for i=1:n
-        i = i %outputting BV*m while running for debugging and impatience
+        i = i %outputting BV*m while running
         for j=1:m
 %Initial condition of virgin resin (preloaded with Na)                                               
             RESINNa(1,1:m) = TR;
@@ -126,7 +131,6 @@ for k=l:l
             WMg = WATERMg(i,j);
        
 %Solving the system of linear equations
-            
             set0=[RNa;RBa;RSr;RCa;RMg;WNa;WBa;WSr;WCa;WMg];
 
             TNa = RNa + WNa;
@@ -136,12 +140,12 @@ for k=l:l
             TMg = RMg + WMg;
 
             options = optimset('Display','off','TolFun', 1.0e-4, 'TolX',1.0e-4);
+            
             f = @(dummy)msolve(dummy,TR,KBN,KSN,KCN,KMN,TNa,TBa,TSr,TCa,TMg);
 
             [set] = fsolve(f,set0,options);
 
-%Assigning the new values calculated above
-            
+%Assigning the new values calculated above            
             RESINNa(i+1,j) = set(1);
             RESINBa(i+1,j) = set(2);
             RESINSr(i+1,j) = set(3);
@@ -165,11 +169,15 @@ for k=l:l
             Mg_avg_temp = mean(WATERMg);
             Mg_avg(i) = Mg_avg_temp(1,m) * (n/i);
             
+%Debug
+%Mg_avg_temp(1,20) = Mg_avg_temp(1,20)
+
 %Ends the modeling if one of the contaminants is above the set limit and
 %announces the concentration
             %if WBa > Ba_limit || WSr > Sr_limit || WCa > Ca_limit || WMg > Mg_limit
                  %break
-            %end              
+            %end 
+            
             if Ba_avg(i) > Ba_limit
                 disp('Ba =')
                 disp(Ba_avg(i))
@@ -183,14 +191,14 @@ for k=l:l
                 disp(Sr_avg(i))
                 break
             elseif Mg_avg(i) > Mg_limit
-                disp('Ba =')
+                disp('Mg =')
                 disp(Mg_avg(i))
                 break
             end
              
 %Stores the number of bed volumes completed             
             %bed_volumes(k,1) = floor(i/m);
-            bed_volumes(k,1) = i; %this should be divided by m, but I have removed the m for debugging         
+            bed_volumes(k,1) = i/m; %this should be divided by m, but I have removed the m for debugging         
     end
 
 end
@@ -198,7 +206,7 @@ end
 %% Output
 
 %Outputting final answer to command window
-mBV = bed_volumes(l,1)
+BV = bed_volumes(l,1)
 
 %Plotting initial water packet pollutant concentrations moving through the
 %column number set below
@@ -211,12 +219,12 @@ for i = 1:m
     Na(i,1) = WATERNa(col_num,i);
 end
 
-figure
-subplot(1,5,1); plot(Ba, 'Linewidth', 2.0); title('Ba (aq)'); xlabel('Segments'); ylabel('Concentration [meq/L]');
-subplot(1,5,2); plot(Sr, 'Linewidth', 2.0); title('Sr (aq)'); xlabel('Segments'); ylabel('Concentration [meq/L]');
-subplot(1,5,3); plot(Ca, 'Linewidth', 2.0); title('Ca (aq)'); xlabel('Segments'); ylabel('Concentration [meq/L]');
-subplot(1,5,4); plot(Mg, 'Linewidth', 2.0); title('Mg (aq)'); xlabel('Segments'); ylabel('Concentration [meq/L]');
-subplot(1,5,5); plot(Na, 'Linewidth', 2.0); title('Na (aq)'); xlabel('Segments'); ylabel('Concentration [meq/L]');
+%figure
+%subplot(1,5,1); plot(Ba, 'Linewidth', 2.0); title('Ba (aq)'); xlabel('Segments'); ylabel('Concentration [meq/L]');
+%subplot(1,5,2); plot(Sr, 'Linewidth', 2.0); title('Sr (aq)'); xlabel('Segments'); ylabel('Concentration [meq/L]');
+%subplot(1,5,3); plot(Ca, 'Linewidth', 2.0); title('Ca (aq)'); xlabel('Segments'); ylabel('Concentration [meq/L]');
+%subplot(1,5,4); plot(Mg, 'Linewidth', 2.0); title('Mg (aq)'); xlabel('Segments'); ylabel('Concentration [meq/L]');
+%subplot(1,5,5); plot(Na, 'Linewidth', 2.0); title('Na (aq)'); xlabel('Segments'); ylabel('Concentration [meq/L]');
 
 %Plotting the water concentrations after each column and the concentration
 %limits
@@ -235,19 +243,19 @@ for i = 1:n
     column(i) = i;
 end
 
-figure
-subplot(1,5,1); plot(column, Ba_final, column, Ba_lim, '--', 'Linewidth', 2.0); title('Ba (aq)'); ylim([0 1.1*max(Ba_final)]); xlim([0 mBV+1]);  xlabel('BV * m'); ylabel('Concentration [meq/L]');
-subplot(1,5,2); plot(column, Sr_final, column, Sr_lim, '--', 'Linewidth', 2.0); title('Sr (aq)'); ylim([0 1.1*max(Sr_final)]); xlim([0 mBV+1]);xlabel('BV * m'); ylabel('Concentration [meq/L]');
-subplot(1,5,3); plot(column, Ca_final, column, Ca_lim, '--', 'Linewidth', 2.0); title('Ca (aq)'); ylim([0 1.1*max(Ca_final)]); xlim([0 mBV+1]);xlabel('BV * m'); ylabel('Concentration [meq/L]');
-subplot(1,5,4); plot(column, Mg_final, column, Mg_lim, '--', 'Linewidth', 2.0); title('Mg (aq)'); ylim([0 1.1*max(Mg_final)]); xlim([0 mBV+1]);xlabel('BV * m'); ylabel('Concentration [meq/L]');
-subplot(1,5,5); plot(Na_final, 'Linewidth', 2.0); title('Na (aq)', 'Linewidth', 2.0); xlim([0 mBV+1]);xlabel('BV * m'); ylabel('Concentration [meq/L]');
+%figure
+%subplot(1,5,1); plot(column, Ba_final, column, Ba_lim, '--', 'Linewidth', 2.0); title('Ba (aq)'); xlim([0 m*BV+1]);  xlabel('BV'); ylabel('Concentration [meq/L]');
+%subplot(1,5,2); plot(column, Sr_final, column, Sr_lim, '--', 'Linewidth', 2.0); title('Sr (aq)'); xlim([0 m*BV+1]);xlabel('BV'); ylabel('Concentration [meq/L]');
+%subplot(1,5,3); plot(column, Ca_final, column, Ca_lim, '--', 'Linewidth', 2.0); title('Ca (aq)'); xlim([0 m*BV+1]);xlabel('BV'); ylabel('Concentration [meq/L]');
+%subplot(1,5,4); plot(column, Mg_final, column, Mg_lim, '--', 'Linewidth', 2.0); title('Mg (aq)'); xlim([0 m*BV+1]);xlabel('BV'); ylabel('Concentration [meq/L]');
+%subplot(1,5,5); plot(Na_final, 'Linewidth', 2.0); title('Na (aq)', 'Linewidth', 2.0); xlim([0 mBV+1]);xlabel('BV * m'); ylabel('Concentration [meq/L]');
 
 %Plotting the average pollutant concentration in all treated water
 figure
-subplot(1,4,1); plot(column,Ba_avg, column, Ba_lim, '--', 'Linewidth', 2.0); title('Avg Ba (aq)'); xlim([0 mBV+1]);
-subplot(1,4,2); plot(column,Sr_avg, column, Sr_lim, '--', 'Linewidth', 2.0); title('Avg Sr (aq)'); xlim([0 mBV+1]);
-subplot(1,4,3); plot(column,Ca_avg, column, Ca_lim, '--', 'Linewidth', 2.0); title('Avg Ca (aq)'); xlim([0 mBV+1]);
-subplot(1,4,4); plot(column,Mg_avg, column, Mg_lim, '--', 'Linewidth', 2.0); title('Avg Mg (aq)'); xlim([0 mBV+1]);
+subplot(1,4,1); plot(column,Ba_avg, column, Ba_lim, '--', 'Linewidth', 2.0); title('Avg Ba (aq)'); xlim([0 m*BV]);
+subplot(1,4,2); plot(column,Sr_avg, column, Sr_lim, '--', 'Linewidth', 2.0); title('Avg Sr (aq)'); xlim([0 m*BV]);
+subplot(1,4,3); plot(column,Ca_avg, column, Ca_lim, '--', 'Linewidth', 2.0); title('Avg Ca (aq)'); xlim([0 m*BV]);
+subplot(1,4,4); plot(column,Mg_avg, column, Mg_lim, '--', 'Linewidth', 2.0); title('Avg Mg (aq)'); xlim([0 m*BV]);
 
 %Saving water and resin matrices to file for debug
 %csvwrite('Ca_Water_Matrix.csv', WATERCa);

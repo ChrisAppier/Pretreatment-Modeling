@@ -42,7 +42,7 @@ Mg_Inf = Mg_input * Mg_meq;
 Na_Inf = Na_input * Na_meq;
 
 %Number of resin sites (meq/L) in each column
-TR = 385; 
+TR = 4325; 
 
 %Equilibrium constant (K) value between barium and sodium (KBS), strontium
 %and sodium (KSN), calcium and sodium (KCN), and magnesium and sodium (KMN)
@@ -76,7 +76,7 @@ Sr_limit = 9.130 * 10^(-5) * Sr_meq;
 %conditions). n = initial estimate for the number of bed volumes treated
 %(code stops on breakthrough of contaminant at a given level set above). 
 %l = number of data points for each contaminant.
-m = 100;
+m = 20;
 n = m*20;
 l = 1; %Change this to 2 to use contaminant limits condition 2
 bed_volumes = zeros(l,1);
@@ -97,7 +97,7 @@ for k=l:l
     RESINMg = zeros(n,m);
             
     for i=1:n
-        i = i %outputting BV*m while running for debugging and impatience
+        i = i %outputting BV*m while running
         for j=1:m
 %Initial condition of virgin resin (preloaded with Na)                                               
             RESINNa(1,1:m) = TR;
@@ -125,8 +125,7 @@ for k=l:l
             WCa = WATERCa(i,j);
             WMg = WATERMg(i,j);
        
-%Solving the system of linear equations
-            
+%Solving the system of linear equations            
             set0=[RNa;RBa;RSr;RCa;RMg;WNa;WBa;WSr;WCa;WMg];
 
             TNa = RNa + WNa;
@@ -136,12 +135,12 @@ for k=l:l
             TMg = RMg + WMg;
 
             options = optimset('Display','off','TolFun', 1.0e-4, 'TolX',1.0e-4);
+            
             f = @(dummy)msolve(dummy,TR,KBN,KSN,KCN,KMN,TNa,TBa,TSr,TCa,TMg);
 
             [set] = fsolve(f,set0,options);
 
-%Assigning the new values calculated above
-            
+%Assigning the new values calculated above           
             RESINNa(i+1,j) = set(1);
             RESINBa(i+1,j) = set(2);
             RESINSr(i+1,j) = set(3);
@@ -159,7 +158,8 @@ for k=l:l
 %announces the concentration
             %if WBa > Ba_limit || WSr > Sr_limit || WCa > Ca_limit || WMg > Mg_limit
                  %break
-            %end              
+            %end
+            
             if WBa > Ba_limit
                 disp('Ba =')
                 disp(WBa)
