@@ -27,7 +27,7 @@ e_fac  = 0.159988;
 %Setting the number of data points in the files (n) and preallocating
 %vectors
 
-n = 5;
+n = 10000;
 Caustic = zeros(n,1);
 Soda = zeros(n,1);
 Energy = zeros(n,1);
@@ -44,36 +44,36 @@ for i = 1:n
 
 %Calculates change in pollutant concentrations
 
-    Ca = Ca_input(1,i) - Ca_end;
+    Ca = Ca_input(i,1) - Ca_end;
 
-    Mg = Mg_input(1,i) - Mg_end;
+    Mg = Mg_input(i,1) - Mg_end;
 
-    Ba = Ba_input(1,i) - Ba_end;
+    Ba = Ba_input(i,1) - Ba_end;
 
-    Sr = Sr_input(1,i) - Sr_end;
+    Sr = Sr_input(i,1) - Sr_end;
 
 %Calculates carbonate hardness (CCa and CMg) and non-carbonate hardness
 %(NCCa and NCMg). Ba and Sr behave similar to Ca and are all combined under
 %the CCa and NCCa variables
 
-    if 2 * (Ca + Ba + Sr + Mg) <= Alk_input(1,i)
+    if 2 * (Ca + Ba + Sr + Mg) <= Alk_input(i,1)
     
         CCa = Ca + Ba + Sr;
         NCCa = 0;
         CMg = Mg;
         NCMg = 0;
 
-    elseif 2 * (Ca + Ba + Sr + Mg) > Alk_input(1,i) && 2 * (Ca + Ba + Sr) <= Alk_input(1,i)
+    elseif 2 * (Ca + Ba + Sr + Mg) > Alk_input(i,1) && 2 * (Ca + Ba + Sr) <= Alk_input(i,1)
     
         CCa = Ca + Ba + Sr;
         NCCa = 0;
-        CMg = (Alk_input(1,i) - 2 * (Ca + Ba + Sr)) / 2;
+        CMg = (Alk_input(i,1) - 2 * (Ca + Ba + Sr)) / 2;
         NCMg = Mg - CMg;
     
-    elseif 2* (Ca + Ba + Sr + Mg) > Alk_input(1,i) && 2* (Ca + Ba + Sr) > Alk_input(1,i)
+    elseif 2* (Ca + Ba + Sr + Mg) > Alk_input(i,1) && 2* (Ca + Ba + Sr) > Alk_input(i,1)
     
-        CCa = Alk_input(1,i);
-        NCCa = Ca + Ba + Sr - (0.5 * Alk_input(1,i));
+        CCa = Alk_input(i,1);
+        NCCa = Ca + Ba + Sr - (0.5 * Alk_input(i,1));
         CMg = 0;
         NCMg = Mg;
     

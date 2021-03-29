@@ -245,6 +245,6 @@ subplot(1,5,5); plot(Na_final, 'Linewidth', 2.0); title('Na (aq)', 'Linewidth', 
 %csvwrite('Mg_Resin_Matrix.csv', RESINMg);
                                                                  
 %Saves the bed volumes, rounded down to the nearest whole number, to a file
-%csvwrite('IEPSS_BedVolumes.csv', bed_volumes);
+csvwrite('IEPSS_BedVolumes.csv', bed_volumes);
 
 toc

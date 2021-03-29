@@ -25,7 +25,7 @@ Ksp = 10^(-8.48);
 %Setting the number of data points in the files (n) and preallocating
 %vectors
 
-n = 2;
+n = 10000;
 Lime = zeros(n:1);
 Soda = zeros(n:1);
 Sr_end = zeros(n:1);
@@ -34,7 +34,7 @@ Sr_end = zeros(n:1);
 %comparing experimental data to model results
 
 lime_inefficiency = uni_dist(n, 1.46, 1.88);
-soda_inefficiency = uni_dist(n, ); %Need to find #s for soda ash!!
+soda_inefficiency = uni_dist(n, 0.77, 1.80);
 
 %Main loop
 
@@ -42,37 +42,37 @@ for i = 1:n
 
 %Calculates change in pollutant concentrations
 
-    Ca = Ca_input(1,i) - Ca_end;
+    Ca = Ca_input(i,1) - Ca_end;
 
-    Mg = Mg_input(1,i) - Mg_end;
+    Mg = Mg_input(i,1) - Mg_end;
 
-    Ba = Ba_input(1,i) - Ba_end;
+    Ba = Ba_input(i,1) - Ba_end;
 
-    Sr = Sr_input(1,i) * (Ca / Ca_input(1,i));
+    Sr = Sr_input(i,1) * (Ca / Ca_input(i,1));
 
 
 %Calculates carbonate hardness (CCa and CMg) and non-carbonate hardness
 %(NCCa and NCMg). Ba and Sr behave similar to Ca and are all combined under
 %the CCa and NCCa variables
 
-    if 2 * (Ca + Ba + Sr + Mg) <= Alk_input(1,i)
+    if 2 * (Ca + Ba + Sr + Mg) <= Alk_input(i,1)
     
         CCa = Ca + Ba + Sr;
         NCCa = 0;
         CMg = Mg;
         NCMg = 0;
 
-    elseif 2 * (Ca + Ba + Sr + Mg) > Alk_input(1,i) && 2 * (Ca + Ba + Sr) <= Alk_input(1,i)
+    elseif 2 * (Ca + Ba + Sr + Mg) > Alk_input(i,1) && 2 * (Ca + Ba + Sr) <= Alk_input(i,1)
     
         CCa = Ca + Ba + Sr;
         NCCa = 0;
-        CMg = (Alk_input(1,i) - 2 * (Ca + Ba + Sr)) / 2;
+        CMg = (Alk_input(i,1) - 2 * (Ca + Ba + Sr)) / 2;
         NCMg = Mg - CMg;
     
-    elseif 2 * (Ca + Ba + Sr + Mg) > Alk_input(1,i) && 2 * (Ca + Ba + Sr) > Alk_input(1,i)
+    elseif 2 * (Ca + Ba + Sr + Mg) > Alk_input(i,1) && 2 * (Ca + Ba + Sr) > Alk_input(i,1)
     
-        CCa = Alk_input(1,i);
-        NCCa = Ca + Ba + Sr - (0.5 * Alk_input(1,i));
+        CCa = Alk_input(i,1);
+        NCCa = Ca + Ba + Sr - (0.5 * Alk_input(i,1));
         CMg = 0;
         NCMg = Mg;
     
@@ -92,7 +92,7 @@ for i = 1:n
     
 %Calculates the amount of Sr left in water
     
-    Sr_end(i,1) = Sr_input(1,i) - Sr;
+    Sr_end(i,1) = Sr_input(i,1) - Sr;
     
 end
 

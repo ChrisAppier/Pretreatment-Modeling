@@ -28,7 +28,7 @@ Ksp = 10^(-9.98);
 %Setting the number of data points in the files (n) and preallocating
 %vectors
 
-n = 1;
+n = 10000;
 Sulfate = zeros(n,1);
 ba_add = zeros(n,1);
 
@@ -37,7 +37,7 @@ ba_add = zeros(n,1);
 
 sulfate_inefficiency = uni_dist(n, 1.80, 5.77);
 lime_inefficiency = uni_dist(n, 1.46, 1.88);
-soda_inefficiency = uni_dist(n, ); %Need to find #s for soda ash!!
+soda_inefficiency = uni_dist(n, 0.77, 1.80);
 
 %Main loop for Ba and Sr removal
 
@@ -45,9 +45,9 @@ for i = 1:n
 
 %Calculates change in pollutant concentrations
 
-    Ba = Ba_input(1,i) - Ba_end;
+    Ba = Ba_input(i,1) - Ba_end;
 
-    Sr = Sr_input(1,i) - Sr_end;
+    Sr = Sr_input(i,1) - Sr_end;
 
 %Determines if Ba will limit Sr removal
 
@@ -83,31 +83,31 @@ for i = 1:n
 
 %Calculates change in pollutant concentrations
 
-    Ca = Ca_input(1,i) - Ca_end;
+    Ca = Ca_input(i,1) - Ca_end;
 
-    Mg = Mg_input(1,i) - Mg_end;
+    Mg = Mg_input(i,1) - Mg_end;
 
 %Calculates carbonate hardness (CCa and CMg) and non-carbonate hardness
 %(NCCa and NCMg).
 
-    if 2 * (Ca + Mg) <= Alk_input(1,i)
+    if 2 * (Ca + Mg) <= Alk_input(i,1)
     
         CCa = Ca;
         NCCa = 0;
         CMg = Mg;
         NCMg = 0;
 
-    elseif 2 * (Ca + Mg) > Alk_input(1,i) && 2 * Ca <= Alk_input(1,i)
+    elseif 2 * (Ca + Mg) > Alk_input(i,1) && 2 * Ca <= Alk_input(i,1)
     
         CCa = Ca;
         NCCa = 0;
-        CMg = (Alk_input(1,i) - 2 * Ca) / 2;
+        CMg = (Alk_input(i,1) - 2 * Ca) / 2;
         NCMg = Mg - CMg;
     
-    elseif 2 * (Ca + Mg) > Alk_input(1,i) && 2 * Ca > Alk_input(1,i)
+    elseif 2 * (Ca + Mg) > Alk_input(i,1) && 2 * Ca > Alk_input(i,1)
     
-        CCa = Alk_input(1,i);
-        NCCa = Ca - (0.5 * Alk_input(1,i));
+        CCa = Alk_input(i,1);
+        NCCa = Ca - (0.5 * Alk_input(i,1));
         CMg = 0;
         NCMg = Mg;
     

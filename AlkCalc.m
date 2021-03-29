@@ -1,11 +1,11 @@
-%This script takes water data from an Excel spreadsheet, calculates the
-%alkalinity, and inserts the alkalinity data into a stored variable for
+%This script takes water data from an Excel spreadsheet in mg/L, calculates the
+%alkalinity in eq/L, and inserts the alkalinity data into a stored variable for
 %other scripts to use.
 
 %Importing the data (mg/L) into variables
-HCO3 = xlsread('waterdata.xlsx','A2:A4');
-CO3 = xlsread('waterdata.xlsx','B2:B4');
-pH = xlsread('waterdata.xlsx','C2:C4');
+HCO3 = xlsread('waterdata.xlsx','CG2:CG274');
+CO3 = xlsread('waterdata.xlsx','CF2:CF274');
+pH = xlsread('waterdata.xlsx','BG2:BG274');
 
 %Checks the number of data points
 HCO3_size = size(HCO3,1); %may need to swap 1 and vector%
@@ -24,11 +24,13 @@ CO3 = CO3 / (60.008 * 1000);
 
 %Predefining variables
 pOH = zeros(size(pH,1),1);
+Alk = zeros(size(pH,1),1);
+x = zeros(size(pH,1),1);
 
 %Calculates the H and OH concentrations based on pH
-parfor i = 1:pH_size
+for i = 1:pH_size
    
-    pOH = 14 - pH(i);
+    pOH(i) = 14 - pH(i);
     
     H(i) = 10^(-pH(i));
     
@@ -37,11 +39,19 @@ parfor i = 1:pH_size
 end
 
 %Calculates the alkalinity
-parfor i = 1:pH_size
+for i = 1:pH_size
     
-   Alk = HCO3(i) + 2*CO3(i) + OH(i) - H(i);
+   Alk(i) = HCO3(i) + 2*CO3(i) + OH(i) - H(i);
     
 end
 
+for i = 1:pH_size
+    x(i) = i;
+end
+
+plot(x, Alk, 'LineWidth', 2.0); title('Alkalinity'); ylim([0 0.1]);
+xlabel('Data Point'); ylabel('Alkalinity (eq/L)');
+
 %Stores the alkalinity
 save Alk_data.mat Alk;
+csvwrite('Alk_data.csv', Alk);
