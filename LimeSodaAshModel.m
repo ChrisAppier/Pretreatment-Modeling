@@ -43,11 +43,17 @@ for i = 1:n
 %Calculates change in pollutant concentrations
 
     Ca = Ca_input(i,1) - Ca_end;
-
-    Mg = Mg_input(i,1) - Mg_end;
-
-    Ba = Ba_input(i,1) - Ba_end;
-
+    if Ca < 0
+        Ca = 0;
+    end
+    Mg = Mg_input(i,1) - Mg_end;    
+    if Mg < 0
+        Mg = 0;
+    end
+    Ba = Ba_input(i,1) - Ba_end;    
+    if Ba < 0
+        Ba = 0;
+    end
     Sr = Sr_input(i,1) * (Ca / Ca_input(i,1));
 
 
@@ -71,7 +77,7 @@ for i = 1:n
     
     elseif 2 * (Ca + Ba + Sr + Mg) > Alk_input(i,1) && 2 * (Ca + Ba + Sr) > Alk_input(i,1)
     
-        CCa = Alk_input(i,1);
+        CCa = Alk_input(i,1) / 2;
         NCCa = Ca + Ba + Sr - (0.5 * Alk_input(i,1));
         CMg = 0;
         NCMg = Mg;

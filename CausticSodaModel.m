@@ -45,12 +45,21 @@ for i = 1:n
 %Calculates change in pollutant concentrations
 
     Ca = Ca_input(i,1) - Ca_end;
-
-    Mg = Mg_input(i,1) - Mg_end;
-
-    Ba = Ba_input(i,1) - Ba_end;
-
-    Sr = Sr_input(i,1) - Sr_end;
+    if Ca < 0
+        Ca = 0;
+    end
+    Mg = Mg_input(i,1) - Mg_end;    
+    if Mg < 0
+        Mg = 0;
+    end
+    Ba = Ba_input(i,1) - Ba_end;    
+    if Ba < 0
+        Ba = 0;
+    end
+    Sr = Sr_input(i,1) - Sr_end;    
+    if Sr < 0
+        Sr = 0;
+    end
 
 %Calculates carbonate hardness (CCa and CMg) and non-carbonate hardness
 %(NCCa and NCMg). Ba and Sr behave similar to Ca and are all combined under
@@ -72,17 +81,17 @@ for i = 1:n
     
     elseif 2* (Ca + Ba + Sr + Mg) > Alk_input(i,1) && 2* (Ca + Ba + Sr) > Alk_input(i,1)
     
-        CCa = Alk_input(i,1);
+        CCa = Alk_input(i,1) / 2;
         NCCa = Ca + Ba + Sr - (0.5 * Alk_input(i,1));
         CMg = 0;
         NCMg = Mg;
     
     end
-
+    
 %Calculates the amount of caustic soda, soda ash required, and energy
 %required
 
-    Caustic(i,1) = 2*CCa + 4*CMg + 2*NCMg + (Ksp / Ca_end) .* caustic_inefficiency(1,i);
+    Caustic(i,1) = (2*CCa + 4*CMg + 2*NCMg + (Ksp / Ca_end)) .* caustic_inefficiency(1,i);
 
     Soda(i,1) = NCCa .* soda_inefficiency(1,i);
     
@@ -100,5 +109,6 @@ end
 csvwrite('CausticSoda_Caustic.csv', Caustic);
 csvwrite('CausticSoda_Soda.csv', Soda);
 csvwrite('CausticSoda_Energy.csv', Energy);
+csvwrite('Mg.csv', Mg);
 
 toc

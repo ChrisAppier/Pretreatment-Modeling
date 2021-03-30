@@ -60,3 +60,14 @@ subplot(2,3,3); histogram(Ca_sample, nbin); title('Calcium Original');
 subplot(2,3,4); histogram(Mg_sample, nbin); title('Magnesium Original');
 subplot(2,3,5); histogram(Na_sample, nbin); title('Sodium Original');
 subplot(2,3,6); histogram(Alk_sample, nbin); title('Alkalinity Original');
+
+figure
+subplot(2,2,1); histogram(Na_sample, nbin); title('Sodium Original'); xlabel('mg/L'); ylabel('Count');
+subplot(2,2,2); histogram(Na_input, nbin); title('Sodium Generated'); xlabel('mg/L'); ylabel('Count');
+subplot(2,2,3); histogram(Ca_sample, nbin); title('Calcium Original'); xlabel('mg/L'); ylabel('Count');
+subplot(2,2,4); histogram(Ca_input, nbin); title('Calcium Generated'); xlabel('mg/L'); ylabel('Count');
+
+
+
+
+

@@ -45,9 +45,14 @@ for i = 1:n
 
 %Calculates change in pollutant concentrations
 
-    Ba = Ba_input(i,1) - Ba_end;
-
-    Sr = Sr_input(i,1) - Sr_end;
+    Ba = Ba_input(i,1) - Ba_end;    
+    if Ba < 0
+        Ba = 0;
+    end
+    Sr = Sr_input(i,1) - Sr_end;    
+    if Sr < 0
+        Sr = 0;
+    end
 
 %Determines if Ba will limit Sr removal
 
@@ -69,7 +74,7 @@ for i = 1:n
     
 %Converts lime and soda ash to g/m^3
 
-    %Sulfate(i,1) = Sulfate(i,1) * 1000 * 142.04; %Molar mass as sodium sulfate
+    Sulfate(i,1) = Sulfate(i,1) * 1000 * 142.04; %Molar mass as sodium sulfate
     
 end
 
@@ -84,8 +89,12 @@ for i = 1:n
 %Calculates change in pollutant concentrations
 
     Ca = Ca_input(i,1) - Ca_end;
-
-    Mg = Mg_input(i,1) - Mg_end;
+    if Ca < 0
+        Ca = 0;
+    end
+    Mg = Mg_input(i,1) - Mg_end;    
+    if Mg < 0
+        Mg = 0;
 
 %Calculates carbonate hardness (CCa and CMg) and non-carbonate hardness
 %(NCCa and NCMg).
@@ -106,7 +115,7 @@ for i = 1:n
     
     elseif 2 * (Ca + Mg) > Alk_input(i,1) && 2 * Ca > Alk_input(i,1)
     
-        CCa = Alk_input(i,1);
+        CCa = Alk_input(i,1) / 2;
         NCCa = Ca - (0.5 * Alk_input(i,1));
         CMg = 0;
         NCMg = Mg;
@@ -126,8 +135,6 @@ for i = 1:n
     Soda(i,1) = Soda(i,1) * 1000 * 105.9888; %molar mass is for anhydrous
     
 end
-
-%Add lime soda ash removal model for Ca, Mg
 
 %Saves the sulfate, lime, and soda ash required to a file
 csvwrite('Sulfate_Sulfate.csv', Sulfate);
