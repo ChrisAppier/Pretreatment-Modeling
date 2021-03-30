@@ -95,6 +95,7 @@ for i = 1:n
     Mg = Mg_input(i,1) - Mg_end;    
     if Mg < 0
         Mg = 0;
+    end
 
 %Calculates carbonate hardness (CCa and CMg) and non-carbonate hardness
 %(NCCa and NCMg).
