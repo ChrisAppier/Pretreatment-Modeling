@@ -1,11 +1,4 @@
-
-*.m~
-*.txt
 *.numbers
 *.numbers
-IonExchange_BedVolumes.csv
 *.asv
-*.csv
-*.csv
 test.m
-waterdata.xlsx
