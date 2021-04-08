@@ -52,8 +52,6 @@ KSN = 0.32;
 KCN = 0.30;
 KMN = 0.23; %literature value
 
-%KMN = 0.6; %value to make condition 2 match exp results closely
-
 KBN = 5.41; %values obtained from DuPont 
 KSN = 2.62; 
 KCN = 1.89;
@@ -66,25 +64,18 @@ Mg_limit = 6.418 * 10^(-3) * Mg_meq;
 Ba_limit = 1.566 * 10^(-4) * Ba_meq;
 Sr_limit = 9.130 * 10^(-5) * Sr_meq;
 
-%Contaminant limits (meq/L) (Condition 2) [This corresponds to the second
-%value of the contaminant_input.mat variables]
-%Ca_limit = 1.153 * 10^(-1) * Ca_meq;
-%Mg_limit = 5.925 * 10^(-2) * Mg_meq;
-%Ba_limit = 1.000 * 10^(-1) * Ba_meq; 
-%Sr_limit = 1.664 * 10^(-2) * Sr_meq;
-
 %m = number of segments the column is divided into + 1 (for initial
 %conditions). n = initial estimate for the number of bed volumes treated
 %(code stops on breakthrough of contaminant at a given level set above). 
 %l = number of data points for each contaminant.
 m = 20;
-n = m*50;
-l = 1; %Change this to 2 to use contaminant limits condition 2
+n = m*5000;
+l = 10;
 bed_volumes = zeros(l,1);
 
 %% SOLVER FUNCTION
-for k=l:l
-    
+for k=1:l
+    k = k
 %Preallocating/resetting resin and water variables and filling them with zeroes 
     WATERNa = zeros(n,m);
     WATERBa = zeros(n,m);
@@ -102,7 +93,7 @@ for k=l:l
     Mg_avg = zeros(1,n);
             
     for i=1:n
-        i = i %outputting BV*m while running
+
         for j=1:m
 %Initial condition of virgin resin (preloaded with Na)                                               
             RESINNa(1,1:m) = TR;
@@ -169,8 +160,6 @@ for k=l:l
             Mg_avg_temp = mean(WATERMg);
             Mg_avg(i) = Mg_avg_temp(1,m) * (n/i);
             
-%Debug
-%Mg_avg_temp(1,20) = Mg_avg_temp(1,20)
 
 %Ends the modeling if one of the contaminants is above the set limit and
 %announces the concentration
@@ -181,24 +170,32 @@ for k=l:l
             if Ba_avg(i) > Ba_limit
                 disp('Ba =')
                 disp(Ba_avg(i))
+                disp('Ba lim =')
+                disp(Ba_limit)
                 break
             elseif Ca_avg(i) > Ca_limit
                 disp('Ca =')
                 disp(Ca_avg(i))
+                disp('Ca lim =')
+                disp(Ca_limit)
                 break
             elseif Sr_avg(i) > Sr_limit
                 disp('Sr =')
                 disp(Sr_avg(i))
+                disp('Sr lim =')
+                disp(Sr_limit)
                 break
             elseif Mg_avg(i) > Mg_limit
                 disp('Mg =')
                 disp(Mg_avg(i))
+                disp('Mg lim =')
+                disp(Mg_limit)
                 break
             end
              
 %Stores the number of bed volumes completed             
-            %bed_volumes(k,1) = floor(i/m);
-            bed_volumes(k,1) = i/m; %this should be divided by m, but I have removed the m for debugging         
+            bed_volumes(k,1) = floor(i/m);
+            
     end
 
 end
@@ -206,18 +203,18 @@ end
 %% Output
 
 %Outputting final answer to command window
-BV = bed_volumes(l,1)
+BV = bed_volumes
 
 %Plotting initial water packet pollutant concentrations moving through the
 %column number set below
 col_num = 1; %Set equal to mBV to see the last column
-for i = 1:m
-    Ba(i,1) = WATERBa(col_num,i);
-    Sr(i,1) = WATERSr(col_num,i);
-    Ca(i,1) = WATERCa(col_num,i);
-    Mg(i,1) = WATERMg(col_num,i);
-    Na(i,1) = WATERNa(col_num,i);
-end
+%for i = 1:m
+    %Ba(i,1) = WATERBa(col_num,i);
+    %Sr(i,1) = WATERSr(col_num,i);
+    %Ca(i,1) = WATERCa(col_num,i);
+    %Mg(i,1) = WATERMg(col_num,i);
+    %Na(i,1) = WATERNa(col_num,i);
+%end
 
 %figure
 %subplot(1,5,1); plot(Ba, 'Linewidth', 2.0); title('Ba (aq)'); xlabel('Segments'); ylabel('Concentration [meq/L]');
@@ -228,20 +225,20 @@ end
 
 %Plotting the water concentrations after each column and the concentration
 %limits
-for i = 1:n
-    Ba_final(i) = WATERBa(i,m);
-    Sr_final(i) = WATERSr(i,m);
-    Ca_final(i) = WATERCa(i,m);
-    Mg_final(i) = WATERMg(i,m);
-    Na_final(i) = WATERNa(i,m);
+%for i = 1:n
+    %Ba_final(i) = WATERBa(i,m);
+    %Sr_final(i) = WATERSr(i,m);
+    %Ca_final(i) = WATERCa(i,m);
+    %Mg_final(i) = WATERMg(i,m);
+    %Na_final(i) = WATERNa(i,m);
     
-    Ba_lim(i,1) = Ba_limit;
-    Ca_lim(i,1) = Ca_limit;
-    Sr_lim(i,1) = Sr_limit;
-    Mg_lim(i,1) = Mg_limit;
+    %Ba_lim(i,1) = Ba_limit;
+    %Ca_lim(i,1) = Ca_limit;
+    %Sr_lim(i,1) = Sr_limit;
+    %Mg_lim(i,1) = Mg_limit;
     
-    column(i) = i;
-end
+    %column(i) = i;
+%end
 
 %figure
 %subplot(1,5,1); plot(column, Ba_final, column, Ba_lim, '--', 'Linewidth', 2.0); title('Ba (aq)'); xlim([0 m*BV+1]);  xlabel('BV'); ylabel('Concentration [meq/L]');
@@ -251,11 +248,11 @@ end
 %subplot(1,5,5); plot(Na_final, 'Linewidth', 2.0); title('Na (aq)', 'Linewidth', 2.0); xlim([0 mBV+1]);xlabel('BV * m'); ylabel('Concentration [meq/L]');
 
 %Plotting the average pollutant concentration in all treated water
-figure
-subplot(1,4,1); plot(column,Ba_avg, column, Ba_lim, '--', 'Linewidth', 2.0); title('Avg Ba (aq)'); xlim([0 m*BV]);
-subplot(1,4,2); plot(column,Sr_avg, column, Sr_lim, '--', 'Linewidth', 2.0); title('Avg Sr (aq)'); xlim([0 m*BV]);
-subplot(1,4,3); plot(column,Ca_avg, column, Ca_lim, '--', 'Linewidth', 2.0); title('Avg Ca (aq)'); xlim([0 m*BV]);
-subplot(1,4,4); plot(column,Mg_avg, column, Mg_lim, '--', 'Linewidth', 2.0); title('Avg Mg (aq)'); xlim([0 m*BV]);
+%figure
+%subplot(1,4,1); plot(column,Ba_avg, column, Ba_lim, '--', 'Linewidth', 2.0); title('Avg Ba (aq)'); xlim([0 m*BV]);
+%subplot(1,4,2); plot(column,Sr_avg, column, Sr_lim, '--', 'Linewidth', 2.0); title('Avg Sr (aq)'); xlim([0 m*BV]);
+%subplot(1,4,3); plot(column,Ca_avg, column, Ca_lim, '--', 'Linewidth', 2.0); title('Avg Ca (aq)'); xlim([0 m*BV]);
+%subplot(1,4,4); plot(column,Mg_avg, column, Mg_lim, '--', 'Linewidth', 2.0); title('Avg Mg (aq)'); xlim([0 m*BV]);
 
 %Saving water and resin matrices to file for debug
 %csvwrite('Ca_Water_Matrix.csv', WATERCa);
@@ -270,6 +267,6 @@ subplot(1,4,4); plot(column,Mg_avg, column, Mg_lim, '--', 'Linewidth', 2.0); tit
 %csvwrite('Mg_Resin_Matrix.csv', RESINMg);
                                                                  
 %Saves the bed volumes, rounded down to the nearest whole number, to a file
-%csvwrite('IEPSS_BedVolumes.csv', bed_volumes);
+csvwrite('IEPSS_BedVolumes.csv', bed_volumes);
 
 toc

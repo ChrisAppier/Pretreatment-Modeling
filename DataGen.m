@@ -19,6 +19,7 @@ Ba_sample = Ba_sample / (1000 * 137.33);
 Ca_sample = Ca_sample / (1000 * 40.078);
 Sr_sample = Sr_sample / (1000 * 87.62);
 Mg_sample = Mg_sample / (1000 * 24.305);
+Na_sample = Na_sample / (1000 * 22.99);
 
 %Creating distributions based on the USGS water data
 Ba_input = lhs_empir(Ba_sample, 10000);
