@@ -54,7 +54,7 @@ for i = 1:n
     if Ba < 0
         Ba = 0;
     end
-    Sr = Sr_input(i,1) * (Ca / Ca_input(i,1));
+    Sr = Sr_input(i,1) * (Ca / Ca_input(i,1)); %Strontium removal is on a 1:1 ratio of percent removal of Ca
 
 
 %Calculates carbonate hardness (CCa and CMg) and non-carbonate hardness

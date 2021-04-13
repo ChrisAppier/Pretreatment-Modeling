@@ -47,10 +47,10 @@ TR = 4325;
 %Equilibrium constant (K) value between barium and sodium (KBS), strontium
 %and sodium (KSN), calcium and sodium (KCN), and magnesium and sodium (KMN)
 %for PSS
-KBN = 0.45; 
-KSN = 0.32; 
-KCN = 0.30;
-KMN = 0.23; %literature value
+%KBN = 0.45; 
+%KSN = 0.32; 
+%KCN = 0.30;
+%KMN = 0.23; %literature value
 
 KBN = 5.41; %values obtained from DuPont 
 KSN = 2.62; 
@@ -74,8 +74,8 @@ l = 10;
 bed_volumes = zeros(l,1);
 
 %% SOLVER FUNCTION
-for k=1:l
-    k = k
+parfor k=1:l
+
 %Preallocating/resetting resin and water variables and filling them with zeroes 
     WATERNa = zeros(n,m);
     WATERBa = zeros(n,m);
