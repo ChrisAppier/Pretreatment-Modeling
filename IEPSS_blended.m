@@ -69,13 +69,24 @@ Sr_limit = 9.130 * 10^(-5) * Sr_meq;
 %(code stops on breakthrough of contaminant at a given level set above). 
 %l = number of data points for each contaminant.
 m = 20;
-n = m*5000;
-l = 10;
+n = m*500;
+l = 10000;
 bed_volumes = zeros(l,1);
+
+%Finds influent waters that have all concentrations below the limit and
+%sets them to zero to separate out later
+parfor k=1:l
+    if Ba_Inf(k)<Ba_limit && Sr_Inf(k)<Sr_limit && Ca_Inf(k)<Ca_limit && Mg_Inf(k)<Mg_limit
+        Ba_Inf(k) = 0;
+        Sr_Inf(k) = 0;
+        Ca_Inf(k) = 0;
+        Mg_Inf(k) = 0;
+    end
+end
 
 %% SOLVER FUNCTION
 parfor k=1:l
-
+    
 %Preallocating/resetting resin and water variables and filling them with zeroes 
     WATERNa = zeros(n,m);
     WATERBa = zeros(n,m);
@@ -163,38 +174,19 @@ parfor k=1:l
 
 %Ends the modeling if one of the contaminants is above the set limit and
 %announces the concentration
-            %if WBa > Ba_limit || WSr > Sr_limit || WCa > Ca_limit || WMg > Mg_limit
-                 %break
-            %end 
+            if Ba_avg(i) > Ba_limit || Sr_avg(i) > Sr_limit || Ca_avg(i) > Ca_limit || Mg_avg(i) > Mg_limit
+                 break
+            end 
             
-            if Ba_avg(i) > Ba_limit
-                disp('Ba =')
-                disp(Ba_avg(i))
-                disp('Ba lim =')
-                disp(Ba_limit)
-                break
-            elseif Ca_avg(i) > Ca_limit
-                disp('Ca =')
-                disp(Ca_avg(i))
-                disp('Ca lim =')
-                disp(Ca_limit)
-                break
-            elseif Sr_avg(i) > Sr_limit
-                disp('Sr =')
-                disp(Sr_avg(i))
-                disp('Sr lim =')
-                disp(Sr_limit)
-                break
-            elseif Mg_avg(i) > Mg_limit
-                disp('Mg =')
-                disp(Mg_avg(i))
-                disp('Mg lim =')
-                disp(Mg_limit)
+%Sets the bed volume higher than the highest guess if the incoming water sample
+%has influent concentrations below the limits
+            if Ba_Inf(k)==0 && Sr_Inf(k)==0 && Ca_Inf(k)==0 && Mg_Inf(k)==0    
+                bed_volumes(k,1) = 10001;
                 break
             end
-             
+            
 %Stores the number of bed volumes completed             
-            bed_volumes(k,1) = floor(i/m);
+            bed_volumes(k,1) = i/m;
             
     end
 
