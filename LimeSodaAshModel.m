@@ -2,8 +2,6 @@
 %calcium, magnesium, barium, and strontium hardness in water. Strontium
 %removal is through substitution with calcium.
 
-clc
-clear 
 tic
 
 %Loading the input data files as mol/L
@@ -13,14 +11,33 @@ load('Mg_input')
 load('Ba_input')
 load('Sr_input')
 load('Alk_input')
+load('Mg_ends')
+load('Ca_ends')
+load('Sr_ends')
+load('Ba_ends')
 
 %Defining treatment goals for contaminants (end), solubility constant
 %(Ksp for Ca carbonate used)
 
-Ba_end = 0 * 10^(-5);
-Ca_end = 6.363 * 10^(-4);
-Mg_end = 8.091 * 10^(-4);
+Ca_end = Ca_ends;
+Mg_end = Mg_ends;
+Ba_end = Ba_ends;
+Sr_end = Sr_ends;
 Ksp = 10^(-8.48);
+
+%Defining the LCA data values
+soda_AP = 0.00503;
+lime_AP = 0.00153; %Acidification potential (kg SO2 eq per kg soda/lime)
+soda_EP = 0.00639;
+lime_EP = 0.000597; %Eutrophication potential (kg N eq per kg soda/lime)
+soda_GWP = 1.03;
+lime_GWP = 0.972; %Global warming potential (kg CO2 eq per kg soda/lime)
+soda_ODP = 1.26*10^(-7);
+lime_ODP = 7.99*10^(-8); %Ozone depletion potential (kg CFC-11 eq per kg soda/lime)
+soda_POCP = 0.0708;
+lime_POCP = 0.0231; %Photochemical ozone creation potential (kg O3 eq per kg soda/lime)
+soda_PEU = 1.67;
+lime_PEU = 0.717; %Primary energy use (MJ surplus per soda/lime)
 
 %Setting the number of data points in the files (n) and preallocating
 %vectors
@@ -29,6 +46,12 @@ n = 10000;
 Lime = zeros(n:1);
 Soda = zeros(n:1);
 Sr_end = zeros(n:1);
+LSA_AP = zeros(n,1);
+LSA_EP = zeros(n,1);
+LSA_GWP = zeros(n,1);
+LSA_ODP = zeros(n,1);
+LSA_POCP = zeros(n,1);
+LSA_PEU = zeros(n,1);
 
 %Generating a uniform distribution for the "inefficiency factor" found by
 %comparing experimental data to model results
@@ -36,17 +59,17 @@ Sr_end = zeros(n:1);
 lime_inefficiency = uni_dist(n, 1.46, 1.88);
 soda_inefficiency = uni_dist(n, 0.77, 1.80);
 
-%Main loop
+%% Main loop
 
 for i = 1:n
 
 %Calculates change in pollutant concentrations
 
-    Ca = Ca_input(i,1) - Ca_end;
+    Ca = Ca_input(i,1) - Ca_end(i);
     if Ca < 0
         Ca = 0;
     end
-    Mg = Mg_input(i,1) - Mg_end;    
+    Mg = Mg_input(i,1) - Mg_end(i);    
     if Mg < 0
         Mg = 0;
     end
@@ -86,24 +109,49 @@ for i = 1:n
 
 %Calculates the amount of lime and soda ash required
 
-    Lime(i,1) = CCa + 2*CMg + NCMg + (Ksp / Ca_end) .* lime_inefficiency(1,i);
+    Lime(i,1) = CCa + 2*CMg + NCMg + (Ksp / Ca_end(i)) .* lime_inefficiency(1,i);
 
     Soda(i,1) = NCCa + NCMg .* soda_inefficiency(1,i);
     
-%Converts lime and soda ash to g/m^3
+%Converts lime and soda ash to kg/m^3
 
-    Lime(i,1) = Lime(i,1) * 1000 * 100.0869;
+    Lime(i,1) = Lime(i,1) * 100.0869;
     
-    Soda(i,1) = Soda(i,1) * 1000 * 105.9888; %molar mass is for anhydrous
+    Soda(i,1) = Soda(i,1) * 105.9888; %molar mass is for anhydrous
+    
+%Calculates emissions impacts per m^3 of water treated
+    LSA_AP(i,1) = (Lime(i,1)*lime_AP) + (Soda(i,1)*soda_AP); %Acidification potential
+    LSA_EP(i,1) = (Lime(i,1)*lime_EP) + (Soda(i,1)*soda_EP); %Eutrophication potential
+    LSA_GWP(i,1) = (Lime(i,1)*lime_GWP) + (Soda(i,1)*soda_GWP); %Global warming potential
+    LSA_ODP(i,1) = (Lime(i,1)*lime_ODP) + (Soda(i,1)*soda_ODP); %Ozone depletion potential
+    LSA_POCP(i,1) = (Lime(i,1)*lime_POCP) + (Soda(i,1)*soda_POCP); %Photochemical ozone creation potential
+    LSA_PEU(i,1) = (Lime(i,1)*lime_PEU) + (Soda(i,1)*soda_PEU); %Primary energy use
     
 %Calculates the amount of Sr left in water
     
     Sr_end(i,1) = Sr_input(i,1) - Sr;
+    if Sr_end(i,1) < 0
+        Sr_end(i,1) = 0;
+    end
     
 end
 
 %Saves the lime and soda ash required to a file
 csvwrite('LimeSodaAsh_Lime.csv', Lime);
 csvwrite('LimeSodaAsh_Soda.csv', Soda);
+csvwrite('LimeSodaAsh_AP.csv', LSA_AP);
+csvwrite('LimeSodaAsh_EP.csv', LSA_EP);
+csvwrite('LimeSodaAsh_GWP.csv', LSA_GWP);
+csvwrite('LimeSodaAsh_ODP.csv', LSA_ODP);
+csvwrite('LimeSodaAsh_POCP.csv', LSA_POCP);
+csvwrite('LimeSodaAsh_PEU.csv', LSA_PEU);
+
+%Writes average (median) environmental impact factors to screen
+disp(median(LSA_AP))
+disp(median(LSA_EP))
+disp(median(LSA_GWP))
+disp(median(LSA_ODP))
+disp(median(LSA_POCP))
+disp(median(LSA_PEU))
 
 toc
