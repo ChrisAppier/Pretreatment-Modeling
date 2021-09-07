@@ -68,24 +68,7 @@ Ba_limit = Ba_ends;
 Sr_limit = Sr_ends;
 
 %Defining the LCA data values
-_AP = 0.00666;
-soda_AP = 0.00503;
-lime_AP = 0.00153; %Acidification potential (kg SO2 eq per kg soda/lime)
-sulfate_EP = 0.00336;
-soda_EP = 0.00639;
-lime_EP = 0.000597; %Eutrophication potential (kg N eq per kg soda/lime)
-sulfate_GWP = 0.648;
-soda_GWP = 1.03;
-lime_GWP = 0.972; %Global warming potential (kg CO2 eq per kg soda/lime)
-sulfate_ODP = 8.83*10^(-8);
-soda_ODP = 1.26*10^(-7);
-lime_ODP = 7.99*10^(-8); %Ozone depletion potential (kg CFC-11 eq per kg soda/lime)
-sulfate_POCP = 0.0552;
-soda_POCP = 0.0708;
-lime_POCP = 0.0231; %Photochemical ozone creation potential (kg O3 eq per kg soda/lime)
-sulfate_PEU = 0.955;
-soda_PEU = 1.67;
-lime_PEU = 0.717; %Primary energy use (MJ surplus per soda/lime)
+
 
 %m = number of segments the column is divided into + 1 (for initial
 %conditions). n = initial estimate for the number of bed volumes treated
