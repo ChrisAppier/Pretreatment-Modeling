@@ -26,6 +26,9 @@ load('Sr_input')
 load('Ca_input')
 load('Mg_input')
 load('Na_input')
+load('Ca_ends')
+load('Sr_ends')
+load('Ba_ends')
 
 %=Molarity to Milliequilavent/L conversion factors
 Ba_meq = 2 * 1000;
@@ -61,8 +64,28 @@ KMN = 1.48;
 %value of the contaminant_input.mat variables]
 Ca_limit = Ca_ends;
 Mg_limit = 10000000; %no limit
-Ba_limit = 1.566 * 10^(-4) * Ba_meq;
-Sr_limit = 9.130 * 10^(-5) * Sr_meq;
+Ba_limit = Ba_ends;
+Sr_limit = Sr_ends;
+
+%Defining the LCA data values
+_AP = 0.00666;
+soda_AP = 0.00503;
+lime_AP = 0.00153; %Acidification potential (kg SO2 eq per kg soda/lime)
+sulfate_EP = 0.00336;
+soda_EP = 0.00639;
+lime_EP = 0.000597; %Eutrophication potential (kg N eq per kg soda/lime)
+sulfate_GWP = 0.648;
+soda_GWP = 1.03;
+lime_GWP = 0.972; %Global warming potential (kg CO2 eq per kg soda/lime)
+sulfate_ODP = 8.83*10^(-8);
+soda_ODP = 1.26*10^(-7);
+lime_ODP = 7.99*10^(-8); %Ozone depletion potential (kg CFC-11 eq per kg soda/lime)
+sulfate_POCP = 0.0552;
+soda_POCP = 0.0708;
+lime_POCP = 0.0231; %Photochemical ozone creation potential (kg O3 eq per kg soda/lime)
+sulfate_PEU = 0.955;
+soda_PEU = 1.67;
+lime_PEU = 0.717; %Primary energy use (MJ surplus per soda/lime)
 
 %m = number of segments the column is divided into + 1 (for initial
 %conditions). n = initial estimate for the number of bed volumes treated
@@ -85,7 +108,7 @@ res_den = 801; %g/l Sigma Aldrich
 %Finds influent waters that have all concentrations below the limit and
 %sets them to zero to separate out later
 parfor k=1:l
-    if Ba_Inf(k)<Ba_limit && Sr_Inf(k)<Sr_limit && Ca_Inf(k)<Ca_limit(k) && Mg_Inf(k)<Mg_limit
+    if Ba_Inf(k)<Ba_limit(k) && Sr_Inf(k)<Sr_limit(k) && Ca_Inf(k)<Ca_limit(k) && Mg_Inf(k)<Mg_limit
         Ba_Inf(k) = 0;
         Sr_Inf(k) = 0;
         Ca_Inf(k) = 0;
@@ -182,7 +205,7 @@ parfor k=1:l
 
 %Ends the modeling if one of the contaminants is above the set limit and
 %announces the concentration
-            if Ba_avg(i) > Ba_limit || Sr_avg(i) > Sr_limit || Ca_avg(i) > Ca_limit(k) || Mg_avg(i) > Mg_limit
+            if Ba_avg(i) > Ba_limit(k,1) || Sr_avg(i) > Sr_limit(k,1) || Ca_avg(i) > Ca_limit(k,1) || Mg_avg(i) > Mg_limit
                  break
             end 
             
@@ -280,6 +303,19 @@ BV = bed_volumes;
 %Also saves Mg_limit for use in other models
 csvwrite('IEPSS_BedVolumes.csv', bed_volumes);
 csvwrite('Mg_ends', Mg_ends);
+csvwrite('IEPSS_AP.csv', AP);
+csvwrite('IEPSS_EP.csv', EP);
+csvwrite('IEPSS_GWP.csv', GWP);
+csvwrite('IEPSS_ODP.csv', ODP);
+csvwrite('IEPSS_POCP.csv', POCP);
+csvwrite('IEPSS_PEU.csv', PEU);
 
+%Writes average (median) environmental impact factors to screen
+disp(median(AP))
+disp(median(EP))
+disp(median(GWP))
+disp(median(ODP))
+disp(median(POCP))
+disp(median(PEU))
 
 toc
