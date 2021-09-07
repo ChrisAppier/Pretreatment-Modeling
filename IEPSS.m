@@ -13,8 +13,6 @@
 %coefficients (K). Five cations are studied in this experiment - sodium,
 %barium, strontium, calcium, and magnesium.
 
-clc
-clear
 tic
 %warning('off', 'all')
 
@@ -26,6 +24,11 @@ load('Sr_input')
 load('Ca_input')
 load('Mg_input')
 load('Na_input')
+
+%Loading the treatment goals (meq/L)
+load('Ca_ends')
+load('Sr_ends')
+load('Ba_ends')
 
 %=Molarity to Milliequilavent/L conversion factors
 Ba_meq = 2 * 1000;
@@ -39,7 +42,7 @@ Ba_Inf = Ba_input * Ba_meq;
 Sr_Inf = Sr_input * Sr_meq;
 Ca_Inf = Ca_input * Ca_meq;
 Mg_Inf = Mg_input * Mg_meq;
-Na_Inf = Na_input * 0;%Na_meq;
+Na_Inf = Na_input * Na_meq;
 
 %Number of resin sites (meq/L) in each column
 TR = 4325; 
@@ -47,34 +50,58 @@ TR = 4325;
 %Equilibrium constant (K) value between barium and sodium (KBS), strontium
 %and sodium (KSN), calcium and sodium (KCN), and magnesium and sodium (KMN)
 %for PSS
-KBN = 0.45; 
-KSN = 0.32; 
-KCN = 0.30;
-KMN = 0.23; 
+%KBN = 0.45; %values from Peltier team
+%KSN = 0.32; 
+%KCN = 0.30;
+%KMN = 0.23; 
 
-KBN = 5.41; %values obtained from DuPont 
+KBN = 5.41; %values obtained from DuPont paper
 KSN = 2.62; 
 KCN = 1.89;
 KMN = 1.48;
 
+%Defining the LCA data values
+PSS_AP = 45.38*0.00706 + 0.513*0.0117; %Acidification potential (kg SO2 eq per kg soda/lime)
+PSS_EP = 45.38*0.000729 + 0.513*0.0012; %Eutrophication potential (kg N eq per kg soda/lime)
+PSS_GWP = 45.38*0.098 + 0.513*3.59; %Global warming potential (kg CO2 eq per kg soda/lime)
+PSS_ODP = 45.38*4.59*10^(-8) + 0.513*2.05*10^(-8); %Ozone depletion potential (kg CFC-11 eq per kg soda/lime)
+PSS_POCP = 45.38*0.0187 + 0.513*0.146; %Photochemical ozone creation potential (kg O3 eq per kg soda/lime)
+PSS_PEU = 45.38*0.979 + 0.513*12.1; %Primary energy use (MJ surplus per soda/lime)
+
+
 %Contaminant limits (meq/L) (Condition 1) [This corresponds to the first
 %value of the contaminant_input.mat variables]
-Ca_limit = 8.234 * 10^(-3) * Ca_meq;
-Mg_limit = 6.418 * 10^(-3) * Mg_meq;
-Ba_limit = 1.566 * 10^(-4) * Ba_meq;
-Sr_limit = 9.130 * 10^(-5) * Sr_meq;
+%Ca_limit = 8.234 * 10^(-3) * Ca_meq;
+%Mg_limit = 6.418 * 10^(-3) * Mg_meq;
+%Ba_limit = 1.566 * 10^(-4) * Ba_meq;
+%Sr_limit = 9.130 * 10^(-5) * Sr_meq;
+
+%Contaminant limits (meq/L) (Condition 2) [This uses values from the
+%sulfate equilibrium calculator known as "Limits"]
+Ca_limit = Ca_ends;
+Ba_limit = Ba_ends;
+Sr_limit = Sr_ends;
 
 %m = number of segments the column is divided into + 1 (for initial
 %conditions). n = initial estimate for the number of bed volumes treated
 %(code stops on breakthrough of contaminant at a given level set above). 
-%l = number of data points for each contaminant.
+%l = number of data points for each contaminant. Mg_ends sets the limit for
+%use in the solubility models
 m = 20;
 n = m*20;
-l = 10;
+l = 10000;
 bed_volumes = zeros(l,1);
+Mg_ends = zeros(l,1);
+IEPSS_AP = zeros(l,1);
+IEPSS_EP = zeros(l,1);
+IEPSS_GWP = zeros(l,1);
+IEPSS_ODP = zeros(l,1);
+IEPSS_POCP = zeros(l,1);
+IEPSS_PEU = zeros(l,1);
+PSS = zeros(l,1);
 
 %% SOLVER FUNCTION
-for k=1:l
+parfor k=1:l
     
 %Preallocating resin and water variables and/or filling them with zeroes 
     WATERNa = zeros(n,m);
@@ -148,31 +175,44 @@ for k=1:l
         
 %Ends the modeling if one of the contaminants is above the set limit and
 %announces the concentration
-            %if WBa > Ba_limit || WSr > Sr_limit || WCa > Ca_limit || WMg > Mg_limit
-                 %break
-            %end
+        if WBa > Ba_limit(k) || WSr > Sr_limit(k) || WCa > Ca_limit(k)
+            Mg_ends(k) = WMg;
+            break
+        end
             
-            if WBa > Ba_limit
-                disp('Ba =')
-                disp(WBa)
-                break
-            elseif WCa > Ca_limit
-                disp('Ca =')
-                disp(WCa)
-                break
-            elseif WSr > Sr_limit
-                disp('Sr =')
-                disp(WSr)
-                break
-            elseif WMg > Mg_limit
-                disp('Ba =')
-                disp(WMg)
-                break
-            end
+%Debug (does not create Mg_ends values)
+            %if WBa > Ba_limit(i)
+                %disp('Ba =')
+                %disp(WBa)
+                %break
+            %elseif WCa > Ca_limit(i)
+                %disp('Ca =')
+                %disp(WCa)
+                %break
+            %elseif WSr > Sr_limit(i)
+                %disp('Sr =')
+                %disp(WSr)
+                %break
+            %elseif WMg > Mg_limit(i)
+                %disp('Ba =')
+                %disp(WMg)
+                %break
+            %end
              
 %Stores the number of bed volumes completed             
-            %bed_volumes(k,1) = floor(i/m);
-            bed_volumes(k,1) = i; %this should be divided by m, but I have removed the m for debugging         
+        bed_volumes(k,1) = i/m;
+        
+%Calculates the kg of PSS per m^3 of water treated (PSS density 801g/l)
+        PSS(k,1) = (0.801 / bed_volumes(k,1)) / 1000;
+            
+%Stores the environmental impact factor values per m^3 of water treated
+    IEPSS_AP(k,1) = PSS(k,1)*PSS_AP; %Acidification potential
+    IEPSS_EP(k,1) = PSS(k,1)*PSS_EP; %Eutrophication potential
+    IEPSS_GWP(k,1) = PSS(k,1)*PSS_GWP; %Global warming potential
+    IEPSS_ODP(k,1) = PSS(k,1)*PSS_ODP; %Ozone depletion potential
+    IEPSS_POCP(k,1) = PSS(k,1)*PSS_POCP; %Photochemical ozone creation potential
+    IEPSS_PEU(k,1) = PSS(k,1)*PSS_PEU; %Fossil Fuel Depletion
+
     end
 
 end
@@ -180,11 +220,11 @@ end
 %% Output
 
 %Outputting final answer to command window
-mBV = bed_volumes
+%mBV = bed_volumes
 
 %Plotting initial water packet pollutant concentrations moving through the
 %column number set below
-col_num = 1; %Set equal to mBV to see the last column
+%col_num = 1; %Set equal to mBV to see the last column
 %for i = 1:m
     %Ba(i,1) = WATERBa(col_num,i);
     %Sr(i,1) = WATERSr(col_num,i);
@@ -238,5 +278,19 @@ col_num = 1; %Set equal to mBV to see the last column
                                                                  
 %Saves the bed volumes, rounded down to the nearest whole number, to a file
 csvwrite('IEPSS_BedVolumes.csv', bed_volumes);
+csvwrite('IEPSS_AP.csv', IEPSS_AP);
+csvwrite('IEPSS_EP.csv', IEPSS_EP);
+csvwrite('IEPSS_GWP.csv', IEPSS_GWP);
+csvwrite('IEPSS_ODP.csv', IEPSS_ODP);
+csvwrite('IEPSS_POCP.csv', IEPSS_POCP);
+csvwrite('IEPSS_PEU.csv', IEPSS_PEU);
+
+%Writes average (median) environmental impact factors to screen
+disp(median(IEPSS_AP))
+disp(median(IEPSS_EP))
+disp(median(IEPSS_GWP))
+disp(median(IEPSS_ODP))
+disp(median(IEPSS_POCP))
+disp(median(IEPSS_PEU))
 
 toc

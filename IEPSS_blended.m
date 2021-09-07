@@ -31,7 +31,7 @@ load('Na_input')
 Ba_meq = 2 * 1000;
 Sr_meq = 2 * 1000;
 Ca_meq = 2 * 1000;
-Mg_meq = 1 * 1000;
+Mg_meq = 2 * 1000;
 Na_meq = 1 * 1000;
 
 %Converting the influent data to milliequivalents
@@ -47,19 +47,20 @@ TR = 4325;
 %Equilibrium constant (K) value between barium and sodium (KBS), strontium
 %and sodium (KSN), calcium and sodium (KCN), and magnesium and sodium (KMN)
 %for PSS
-KBN = 0.45; 
-KSN = 0.32; 
-KCN = 0.30;
-KMN = 0.23; %literature value
+%KBN = 0.45; 
+%KSN = 0.32; 
+%KCN = 0.30;
+%KMN = 0.23; %literature values
 
 KBN = 5.41; %values obtained from DuPont 
 KSN = 2.62; 
 KCN = 1.89;
 KMN = 1.48;
 
-%Contaminant limits (meq/L)
-Ca_limit = 8.234 * 10^(-3) * Ca_meq;
-Mg_limit = 6.418 * 10^(-3) * Mg_meq;
+%Contaminant limits (meq/L) (Condition 1) [This corresponds to the first
+%value of the contaminant_input.mat variables]
+Ca_limit = Ca_ends;
+Mg_limit = 10000000; %no limit
 Ba_limit = 1.566 * 10^(-4) * Ba_meq;
 Sr_limit = 9.130 * 10^(-5) * Sr_meq;
 
@@ -69,8 +70,28 @@ Sr_limit = 9.130 * 10^(-5) * Sr_meq;
 %l = number of data points for each contaminant.
 m = 20;
 n = m*500;
-l = 1000;
+l = 10000;
 bed_volumes = zeros(l,1);
+Mg_ends = zeros(l,1);
+AP = zeros(l,1);
+EP = zeros(l,1);
+GWP = zeros(l,1);
+ODP = zeros(l,1);
+POCP = zeros(l,1);
+PEU = zeros(l,1);
+resin_used = zeros(l,1);
+res_den = 801; %g/l Sigma Aldrich
+
+%Finds influent waters that have all concentrations below the limit and
+%sets them to zero to separate out later
+parfor k=1:l
+    if Ba_Inf(k)<Ba_limit && Sr_Inf(k)<Sr_limit && Ca_Inf(k)<Ca_limit(k) && Mg_Inf(k)<Mg_limit
+        Ba_Inf(k) = 0;
+        Sr_Inf(k) = 0;
+        Ca_Inf(k) = 0;
+        Mg_Inf(k) = 0;
+    end
+end
 
 %% SOLVER FUNCTION
 parfor k=1:l
@@ -138,7 +159,6 @@ parfor k=1:l
 %Assigning the new values calculated above            
             RESINNa(i+1,j) = set(1);
             RESINBa(i+1,j) = set(2);
-            RESINSr(i+1,j) = set(3);
             RESINCa(i+1,j) = set(4);
             RESINMg(i+1,j) = set(5);
             WATERNa(i,j+1) = set(6);
@@ -162,47 +182,38 @@ parfor k=1:l
 
 %Ends the modeling if one of the contaminants is above the set limit and
 %announces the concentration
-            if Ba_avg(i) > Ba_limit || Sr_avg(i) > Sr_limit || Ca_avg(i) > Ca_limit || Mg_avg(i) > Mg_limit
+            if Ba_avg(i) > Ba_limit || Sr_avg(i) > Sr_limit || Ca_avg(i) > Ca_limit(k) || Mg_avg(i) > Mg_limit
                  break
             end 
             
-            %if Ba_avg(i) > Ba_limit
-                %disp('Ba =')
-                %disp(Ba_avg(i))
-                %disp('Ba lim =')
-                %disp(Ba_limit)
-                %break
-            %elseif Ca_avg(i) > Ca_limit
-                %disp('Ca =')
-                %disp(Ca_avg(i))
-                %disp('Ca lim =')
-                %disp(Ca_limit)
-                %break
-            %elseif Sr_avg(i) > Sr_limit
-                %disp('Sr =')
-                %disp(Sr_avg(i))
-                %disp('Sr lim =')
-                %disp(Sr_limit)
-                %break
-            %elseif Mg_avg(i) > Mg_limit
-                %disp('Mg =')
-                %disp(Mg_avg(i))
-                %disp('Mg lim =')
-                %disp(Mg_limit)
-                %break
-            %end
-             
-%Stores the number of bed volumes completed             
-            bed_volumes(k,1) =(i/m);
+%Sets the bed volume higher than the highest guess if the incoming water sample
+%has influent concentrations below the limits
+            if Ba_Inf(k)==0 && Sr_Inf(k)==0 && Ca_Inf(k)==0 && Mg_Inf(k)==0    
+                bed_volumes(k,1) = 10001;
+                break
+            end
             
+%Stores the number of bed volumes completed and Mg end          
+            bed_volumes(k,1) = i/m;
+            Mg_ends(k,1) = Mg_avg(i);
     end
 
-end
+%Calculates amount of resin used per volume water (g/m^3)
+    resin_used(k,1) = res_den * 1000 / bed_volumes(k,1);
 
-%% OUTPUT
+%Calculates emissions impacts
+    AP(k,1) = resin_used(k,1)*PSS_AP; %Acidification potential
+    EP(k,1) = resin_used(k,1)*PSS_EP; %Eutrophication potential
+    GWP(k,1) = resin_used(k,1)*PSS_GWP; %Global warming potential
+    ODP(k,1) = resin_used(k,1)*PSS_ODP; %Ozone depletion potential
+    POCP(k,1) = resin_used(k,1)*PSS_POCP; %Photochemical ozone creation potential
+    PEU(k,1) = resin_used(k,1)*PSS_PEU; %Primary energy use
+
+end
+%% Output
 
 %Outputting final answer to command window
-%BV = bed_volumes
+BV = bed_volumes;
 
 %Plotting initial water packet pollutant concentrations moving through the
 %column number set below
@@ -266,6 +277,9 @@ end
 %csvwrite('Mg_Resin_Matrix.csv', RESINMg);
                                                                  
 %Saves the bed volumes, rounded down to the nearest whole number, to a file
+%Also saves Mg_limit for use in other models
 csvwrite('IEPSS_BedVolumes.csv', bed_volumes);
+csvwrite('Mg_ends', Mg_ends);
+
 
 toc
