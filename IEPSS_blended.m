@@ -57,8 +57,7 @@ KSN = 2.62;
 KCN = 1.89;
 KMN = 1.48;
 
-%Contaminant limits (meq/L) (Condition 1) [This corresponds to the first
-%value of the contaminant_input.mat variables]
+%Contaminant limits (meq/L)
 Ca_limit = 8.234 * 10^(-3) * Ca_meq;
 Mg_limit = 6.418 * 10^(-3) * Mg_meq;
 Ba_limit = 1.566 * 10^(-4) * Ba_meq;
@@ -69,13 +68,13 @@ Sr_limit = 9.130 * 10^(-5) * Sr_meq;
 %(code stops on breakthrough of contaminant at a given level set above). 
 %l = number of data points for each contaminant.
 m = 20;
-n = m*5000;
-l = 10;
+n = m*500;
+l = 1000;
 bed_volumes = zeros(l,1);
 
 %% SOLVER FUNCTION
-for k=1:l
-    k = k
+parfor k=1:l
+    
 %Preallocating/resetting resin and water variables and filling them with zeroes 
     WATERNa = zeros(n,m);
     WATERBa = zeros(n,m);
@@ -163,51 +162,51 @@ for k=1:l
 
 %Ends the modeling if one of the contaminants is above the set limit and
 %announces the concentration
-            %if WBa > Ba_limit || WSr > Sr_limit || WCa > Ca_limit || WMg > Mg_limit
-                 %break
-            %end 
+            if Ba_avg(i) > Ba_limit || Sr_avg(i) > Sr_limit || Ca_avg(i) > Ca_limit || Mg_avg(i) > Mg_limit
+                 break
+            end 
             
-            if Ba_avg(i) > Ba_limit
-                disp('Ba =')
-                disp(Ba_avg(i))
-                disp('Ba lim =')
-                disp(Ba_limit)
-                break
-            elseif Ca_avg(i) > Ca_limit
-                disp('Ca =')
-                disp(Ca_avg(i))
-                disp('Ca lim =')
-                disp(Ca_limit)
-                break
-            elseif Sr_avg(i) > Sr_limit
-                disp('Sr =')
-                disp(Sr_avg(i))
-                disp('Sr lim =')
-                disp(Sr_limit)
-                break
-            elseif Mg_avg(i) > Mg_limit
-                disp('Mg =')
-                disp(Mg_avg(i))
-                disp('Mg lim =')
-                disp(Mg_limit)
-                break
-            end
+            %if Ba_avg(i) > Ba_limit
+                %disp('Ba =')
+                %disp(Ba_avg(i))
+                %disp('Ba lim =')
+                %disp(Ba_limit)
+                %break
+            %elseif Ca_avg(i) > Ca_limit
+                %disp('Ca =')
+                %disp(Ca_avg(i))
+                %disp('Ca lim =')
+                %disp(Ca_limit)
+                %break
+            %elseif Sr_avg(i) > Sr_limit
+                %disp('Sr =')
+                %disp(Sr_avg(i))
+                %disp('Sr lim =')
+                %disp(Sr_limit)
+                %break
+            %elseif Mg_avg(i) > Mg_limit
+                %disp('Mg =')
+                %disp(Mg_avg(i))
+                %disp('Mg lim =')
+                %disp(Mg_limit)
+                %break
+            %end
              
 %Stores the number of bed volumes completed             
-            bed_volumes(k,1) = floor(i/m);
+            bed_volumes(k,1) =(i/m);
             
     end
 
 end
 
-%% Output
+%% OUTPUT
 
 %Outputting final answer to command window
-BV = bed_volumes
+%BV = bed_volumes
 
 %Plotting initial water packet pollutant concentrations moving through the
 %column number set below
-col_num = 1; %Set equal to mBV to see the last column
+%col_num = 1; %Set equal to mBV to see the last column
 %for i = 1:m
     %Ba(i,1) = WATERBa(col_num,i);
     %Sr(i,1) = WATERSr(col_num,i);
