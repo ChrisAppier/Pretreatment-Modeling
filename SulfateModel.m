@@ -34,10 +34,10 @@ lime_AP = 0.00153; %Acidification potential (kg SO2 eq per kg soda/lime)
 sulfate_EP = 0.00336;
 soda_EP = 0.00639;
 lime_EP = 0.000597; %Eutrophication potential (kg N eq per kg soda/lime)
-sulfate__GWP = 0.648;
+sulfate_GWP = 0.648;
 soda_GWP = 1.03;
 lime_GWP = 0.972; %Global warming potential (kg CO2 eq per kg soda/lime)
-sulfate_ODP = 8.83*10(-8);
+sulfate_ODP = 8.83*10^(-8);
 soda_ODP = 1.26*10^(-7);
 lime_ODP = 7.99*10^(-8); %Ozone depletion potential (kg CFC-11 eq per kg soda/lime)
 sulfate_POCP = 0.0552;
@@ -76,11 +76,11 @@ for i = 1:n
 
 %Calculates change in pollutant concentrations
 
-    Ba = Ba_input(i,1) - Ba_end;    
+    Ba = Ba_input(i,1) - Ba_end(i,1);    
     if Ba < 0
         Ba = 0;
     end
-    Sr = Sr_input(i,1) - Sr_end;    
+    Sr = Sr_input(i,1) - Sr_end(i,1);    
     if Sr < 0
         Sr = 0;
     end
@@ -101,7 +101,7 @@ for i = 1:n
 
 %Calculates the sulfate required to remove the Ba and Sr
 
-    Sulfate(i,1) = ((Ksp / Ba_end) + Sr + Ba) .* sulfate_inefficiency(1,i);
+    Sulfate(i,1) = ((Ksp / Ba_end(i,1)) + Sr + Ba) .* sulfate_inefficiency(1,i);
     
 %Converts lime and soda ash to kg/m^3
 
@@ -127,11 +127,11 @@ for i = 1:n
 
 %Calculates change in pollutant concentrations
 
-    Ca = Ca_input(i,1) - Ca_end(i);
+    Ca = Ca_input(i,1) - Ca_end(i,1);
     if Ca < 0
         Ca = 0;
     end
-    Mg = Mg_input(i,1) - Mg_end(i);    
+    Mg = Mg_input(i,1) - Mg_end(i,1);    
     if Mg < 0
         Mg = 0;
     end
@@ -164,7 +164,7 @@ for i = 1:n
 
 %Calculates the amount of lime and soda ash required
 
-    Lime(i,1) = CCa + 2*CMg + NCMg + (Ksp / Ca_end(i)) .* lime_inefficiency(1,i);
+    Lime(i,1) = CCa + 2*CMg + NCMg + (Ksp / Ca_end(i,1)) .* lime_inefficiency(1,i);
 
     Soda(i,1) = NCCa + NCMg .* soda_inefficiency(1,i);
     

@@ -101,7 +101,7 @@ IEPSS_PEU = zeros(l,1);
 PSS = zeros(l,1);
 
 %% SOLVER FUNCTION
-for k=1:l
+parfor k=1:l
     
 %Preallocating resin and water variables and/or filling them with zeroes 
     WATERNa = zeros(n,m);
