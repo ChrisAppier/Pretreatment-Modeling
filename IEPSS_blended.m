@@ -50,11 +50,6 @@ TR = 4325;
 %Equilibrium constant (K) value between barium and sodium (KBS), strontium
 %and sodium (KSN), calcium and sodium (KCN), and magnesium and sodium (KMN)
 %for PSS
-%KBN = 0.45; 
-%KSN = 0.32; 
-%KCN = 0.30;
-%KMN = 0.23; %literature values
-
 KBN = 5.41; %values obtained from DuPont 
 KSN = 2.62; 
 KCN = 1.89;
@@ -68,7 +63,12 @@ Ba_limit = Ba_ends;
 Sr_limit = Sr_ends;
 
 %Defining the LCA data values
-
+PSS_AP = 45.38*0.00706 + 0.513*0.0117; %Acidification potential (kg SO2 eq per kg soda/lime)
+PSS_EP = 45.38*0.000729 + 0.513*0.0012; %Eutrophication potential (kg N eq per kg soda/lime)
+PSS_GWP = 45.38*0.098 + 0.513*3.59; %Global warming potential (kg CO2 eq per kg soda/lime)
+PSS_ODP = 45.38*4.59*10^(-8) + 0.513*2.05*10^(-8); %Ozone depletion potential (kg CFC-11 eq per kg soda/lime)
+PSS_POCP = 45.38*0.0187 + 0.513*0.146; %Photochemical ozone creation potential (kg O3 eq per kg soda/lime)
+PSS_PEU = 45.38*0.979 + 0.513*12.1; %Primary energy use (MJ surplus per soda/lime)
 
 %m = number of segments the column is divided into + 1 (for initial
 %conditions). n = initial estimate for the number of bed volumes treated
