@@ -91,7 +91,7 @@ res_den = 801; %g/l Sigma Aldrich
 %Finds influent waters that have all concentrations below the limit and
 %sets them to zero to separate out later
 parfor k=1:l
-    if Ba_Inf(k)<Ba_limit(k) && Sr_Inf(k)<Sr_limit(k) && Ca_Inf(k)<Ca_limit(k) && Mg_Inf(k)<Mg_limit
+    if Ba_Inf(k)<Ba_limit(k) && Sr_Inf(k)<Sr_limit(k) && Ca_Inf(k)<Ca_limit(k)
         Ba_Inf(k) = 0;
         Sr_Inf(k) = 0;
         Ca_Inf(k) = 0;
@@ -101,7 +101,7 @@ end
 
 %% SOLVER FUNCTION
 parfor k=1:l
-    
+    disp(k)
 %Preallocating/resetting resin and water variables and filling them with zeroes 
     WATERNa = zeros(n,m);
     WATERBa = zeros(n,m);
@@ -204,7 +204,7 @@ parfor k=1:l
             Mg_ends(k,1) = Mg_avg(i);
     end
 
-%Calculates amount of resin used per volume water (g/m^3)
+%Calculates amount of resin used per volume water (kg/m^3)
     resin_used(k,1) = res_den * 1000 / bed_volumes(k,1);
 
 %Calculates emissions impacts

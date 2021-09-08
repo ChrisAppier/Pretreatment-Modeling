@@ -65,15 +65,15 @@ for i = 1:n
 
 %Calculates change in pollutant concentrations
 
-    Ca = Ca_input(i,1) - Ca_end(i);
+    Ca = Ca_input(i,1) - Ca_end(i,1);
     if Ca < 0
         Ca = 0;
     end
-    Mg = Mg_input(i,1) - Mg_end(i);    
+    Mg = Mg_input(i,1) - Mg_end(i,1);    
     if Mg < 0
         Mg = 0;
     end
-    Ba = Ba_input(i,1) - Ba_end;    
+    Ba = Ba_input(i,1) - Ba_end(i,1);    
     if Ba < 0
         Ba = 0;
     end
@@ -109,7 +109,7 @@ for i = 1:n
 
 %Calculates the amount of lime and soda ash required
 
-    Lime(i,1) = CCa + 2*CMg + NCMg + (Ksp / Ca_end(i)) .* lime_inefficiency(1,i);
+    Lime(i,1) = CCa + 2*CMg + NCMg + (Ksp / Ca_end(i,1)) .* lime_inefficiency(1,i);
 
     Soda(i,1) = NCCa + NCMg .* soda_inefficiency(1,i);
     
