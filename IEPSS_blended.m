@@ -76,7 +76,7 @@ PSS_ETX = 45.38*3.03 + 0.513*7.84; %Ecotoxicity (CTUe per kg PSS)
 %(code stops on breakthrough of contaminant at a given level set above). 
 %l = number of data points for each contaminant.
 m = 20;
-n = m*50;
+n = m*5000;
 l = 10000;
 bed_volumes = zeros(l,1);
 Mg_ends = zeros(l,1);
@@ -96,7 +96,7 @@ res_den = 801; %g/l Sigma Aldrich
 
 %% SOLVER FUNCTION
 parfor k=1:l
-    disp(k)
+    
 %Preallocating/resetting resin and water variables and filling them with zeroes 
     WATERNa = zeros(n,m);
     WATERBa = zeros(n,m);
@@ -116,7 +116,7 @@ parfor k=1:l
     for i=1:n
 
         if i == n
-            disp('bruh')
+            disp('Max BV Reached')
         end
         
         for j=1:m
@@ -207,9 +207,9 @@ parfor k=1:l
     POCP(k,1) = resin_used(k,1)*PSS_POCP; %Photochemical ozone creation potential
     PEU(k,1) = resin_used(k,1)*PSS_PEU; %Primary energy use
     CAR(k,1) = resin_used(k,1)*PSS_CAR; %Carcinogenics
-    NCAR(k,1) = resin_used(k,1)*PSS_CAR; %Non-carcinogenics
-    RES(k,1) = resin_used(k,1)*PSS_CAR; %Respiratory effects
-    ETX(k,1) = resin_used(k,1)*PSS_CAR; %Ecotoxicity
+    NCAR(k,1) = resin_used(k,1)*PSS_NCAR; %Non-carcinogenics
+    RES(k,1) = resin_used(k,1)*PSS_RES; %Respiratory effects
+    ETX(k,1) = resin_used(k,1)*PSS_ETX; %Ecotoxicity
 end
 %% Debug
 
