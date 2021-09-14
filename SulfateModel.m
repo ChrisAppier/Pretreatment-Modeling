@@ -2,14 +2,12 @@
 %barium and strontium in water. Strontium removal is through
 %substitution with barium.
 
-tic
-
 %Loading the input data files as mol/L
 
-load('Ba_input')
-load('Sr_input')
 load('Ca_input')
 load('Mg_input')
+load('Ba_input')
+load('Sr_input')
 load('Alk_input')
 load('Mg_ends')
 load('Ca_ends')
@@ -30,22 +28,34 @@ Ksp = 10^(-9.98);
 %Defining the LCA data values
 sulfate_AP = 0.00666;
 soda_AP = 0.00503;
-lime_AP = 0.00153; %Acidification potential (kg SO2 eq per kg soda/lime)
+lime_AP = 0.00153; %Acidification potential (kg SO2 eq per kg sulfate/soda/lime)
 sulfate_EP = 0.00336;
 soda_EP = 0.00639;
-lime_EP = 0.000597; %Eutrophication potential (kg N eq per kg soda/lime)
+lime_EP = 0.000597; %Eutrophication potential (kg N eq per kg sulfate/soda/lime)
 sulfate_GWP = 0.648;
 soda_GWP = 1.03;
-lime_GWP = 0.972; %Global warming potential (kg CO2 eq per kg soda/lime)
+lime_GWP = 0.972; %Global warming potential (kg CO2 eq per kg sulfate/soda/lime)
 sulfate_ODP = 8.83*10^(-8);
 soda_ODP = 1.26*10^(-7);
-lime_ODP = 7.99*10^(-8); %Ozone depletion potential (kg CFC-11 eq per kg soda/lime)
+lime_ODP = 7.99*10^(-8); %Ozone depletion potential (kg CFC-11 eq per kg sulfate/soda/lime)
 sulfate_POCP = 0.0552;
 soda_POCP = 0.0708;
-lime_POCP = 0.0231; %Photochemical ozone creation potential (kg O3 eq per kg soda/lime)
+lime_POCP = 0.0231; %Photochemical ozone creation potential (kg O3 eq per kg sulfate/soda/lime)
 sulfate_PEU = 0.955;
 soda_PEU = 1.67;
-lime_PEU = 0.717; %Primary energy use (MJ surplus per soda/lime)
+lime_PEU = 0.717; %Primary energy use (MJ surplus per kg sulfate/soda/lime)
+sulfate_CAR = 5.83*10^(-08);
+soda_CAR = 6.43*10^(-08);
+lime_CAR = 6.68*10^(-09); %Carcinogenics (CTUh per kg sulfate/soda/lime)
+sulfate_NCAR = 6.31*10^(-07);
+soda_NCAR = 4.36*10^(-07);
+lime_NCAR = 4.30*10^(-08); %Non-carcinogenics (CTUh per kg sulfate/soda/lime)
+sulfate_RES = 0.000932;
+soda_RES = 0.001;
+lime_RES = 0.000221; %Respiratory effects (kg PM2.5 eq per kg sulfate/soda/lime)
+sulfate_ETX = 11.9;
+soda_ETX = 10.9;
+lime_ETX = 1.02; %Ecotoxicity (CTUe per kg sulfate/soda/lime)
 
 %Setting the number of data points in the files (n) and preallocating
 %vectors
@@ -59,6 +69,10 @@ S_GWP = zeros(n,1);
 S_ODP = zeros(n,1);
 S_POCP = zeros(n,1);
 S_PEU = zeros(n,1);
+S_CAR = zeros(n,1);
+S_NCAR = zeros(n,1);
+S_RES = zeros(n,1);
+S_ETX = zeros(n,1);
 Ba_add = zeros(n,1);
 Lime = zeros(n,1);
 Soda = zeros(n,1);
@@ -114,6 +128,10 @@ for i = 1:n
     S_ODP(i,1) = (Sulfate(i,1)*sulfate_ODP); %Ozone depletion potential
     S_POCP(i,1) = (Sulfate(i,1)*sulfate_POCP); %Photochemical ozone creation potential
     S_PEU(i,1) = (Sulfate(i,1)*sulfate_PEU); %Primary energy use
+    S_CAR(i,1) = (Sulfate(i,1)*sulfate_CAR); %Carcinogenics
+    S_NCAR(i,1) = (Sulfate(i,1)*sulfate_NCAR); %Non-carcinogenics
+    S_RES(i,1) = (Sulfate(i,1)*sulfate_RES); %Respiratory effects
+    S_ETX(i,1) = (Sulfate(i,1)*sulfate_ETX); %Ecotoxicity
     
 end
 
@@ -181,8 +199,14 @@ for i = 1:n
     S_ODP(i,1) = (Lime(i,1)*lime_ODP) + (Soda(i,1)*soda_ODP) + S_ODP(i,1); %Ozone depletion potential
     S_POCP(i,1) = (Lime(i,1)*lime_POCP) + (Soda(i,1)*soda_POCP) + S_POCP(i,1); %Photochemical ozone creation potential
     S_PEU(i,1) = (Lime(i,1)*lime_PEU) + (Soda(i,1)*soda_PEU) + S_PEU(i,1); %Primary energy use
+    S_CAR(i,1) = (Lime(i,1)*lime_CAR) + (Soda(i,1)*soda_CAR) + S_CAR(i,1); %Carcinogenics
+    S_NCAR(i,1) = (Lime(i,1)*lime_NCAR) + (Soda(i,1)*soda_NCAR) + S_NCAR(i,1); %Non-carcinogenics
+    S_RES(i,1) = (Lime(i,1)*lime_RES) + (Soda(i,1)*soda_RES) + S_RES(i,1); %Respiratory effects
+    S_ETX(i,1) = (Lime(i,1)*lime_ETX) + (Soda(i,1)*soda_ETX) + S_ETX(i,1); %Ecotoxicity
     
 end
+
+%% Output
 
 %Saves the sulfate, lime, and soda ash required to a file
 csvwrite('Sulfate_Sulfate.csv', Sulfate);
@@ -194,6 +218,10 @@ csvwrite('Sulfate_GWP.csv', S_GWP);
 csvwrite('Sulfate_ODP.csv', S_ODP);
 csvwrite('Sulfate_POCP.csv', S_POCP);
 csvwrite('Sulfate_PEU.csv', S_PEU);
+csvwrite('Sulfate_CAR.csv', S_CAR);
+csvwrite('Sulfate_NCAR.csv', S_NCAR);
+csvwrite('Sulfate_RES.csv', S_RES);
+csvwrite('Sulfate_ETX.csv', S_ETX);
 
 %Writes average (median) environmental impact factors to screen
 disp(median(S_AP))
@@ -202,5 +230,7 @@ disp(median(S_GWP))
 disp(median(S_ODP))
 disp(median(S_POCP))
 disp(median(S_PEU))
-
-toc
+disp(median(S_CAR))
+disp(median(S_NCAR))
+disp(median(S_RES))
+disp(median(S_ETX))

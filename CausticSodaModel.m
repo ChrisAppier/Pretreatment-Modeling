@@ -1,7 +1,5 @@
 %This model calculates the amount of caustic soda required to remove
 %calcium, magnesium, barium, and strontium hardness in water.
- 
-tic
 
 %Loading the input data files as mol/L
 
@@ -28,17 +26,25 @@ e_fac  = 0.159988;
 
 %Defining the LCA data values
 soda_AP = 0.00503;
-energy_AP = 0.000564; %Acidification potential (kg SO2 eq per kg soda/lime)
+energy_AP = 0.000564; %Acidification potential (kg SO2 eq per kg caustic soda or kWh energy used)
 soda_EP = 0.00639;
-energy_EP = 0.00148; %Eutrophication potential (kg N eq per kg soda/lime)
+energy_EP = 0.00148; %Eutrophication potential (kg N eq per kg caustic soda or kWh energy used)
 soda_GWP = 1.03;
-energy_GWP = 0.182; %Global warming potential (kg CO2 eq per kg soda/lime)
+energy_GWP = 0.182; %Global warming potential (kg CO2 eq per kg caustic soda or kWh energy used)
 soda_ODP = 1.26*10^(-7);
-energy_ODP = 1.51*10^(-8); %Ozone depletion potential (kg CFC-11 eq per kg soda/lime)
+energy_ODP = 1.51*10^(-8); %Ozone depletion potential (kg CFC-11 eq per kg caustic soda or kWh energy used)
 soda_POCP = 0.0708;
-energy_POCP = 0.00483; %Photochemical ozone creation potential (kg O3 eq per kg soda/lime)
+energy_POCP = 0.00483; %Photochemical ozone creation potential (kg O3 eq per kg caustic soda or kWh energy used)
 soda_PEU = 1.67;
-energy_PEU = 0.131; %Primary energy use (MJ surplus per soda/lime)
+energy_PEU = 0.131; %Primary energy use (MJ surplus per kg caustic soda or kWh energy used)
+soda_CAR = 6.43*10^(-8);
+energy_CAR = 1.55*10^(-8); %Carcinogenics (CTUh per kg caustic soda or kWh energy used)
+soda_NCAR = 4.36*10^(-7);
+energy_NCAR = 5.22*10^(-8); %Non-carcinogenics (CTUh per kg caustic soda or kWh energy used)
+soda_RES = 0.000496;
+energy_RES = 0.000556; %Respiratory effects (kg PM2.5 eq per kg caustic soda or kWh energy used)
+soda_ETX = 10.9;
+energy_ETX = 1.46; %Ecotoxicity (CTUe per kg caustic soda or kWh energy used)
     
 %Setting the number of data points in the files (n) and preallocating
 %vectors
@@ -53,6 +59,10 @@ CS_GWP = zeros(n,1);
 CS_ODP = zeros(n,1);
 CS_POCP = zeros(n,1);
 CS_PEU = zeros(n,1);
+CS_CAR = zeros(n,1);
+CS_NCAR = zeros(n,1);
+CS_RES = zeros(n,1);
+CS_ETX = zeros(n,1);
 
 %Generating a uniform distribution for the "inefficiency factor" found by
 %comparing experimental data to model results
@@ -132,9 +142,15 @@ for i = 1:n
     CS_ODP(i,1) = (Soda(i,1)*soda_ODP) + (Energy(i,1)*energy_ODP); %Ozone depletion potential
     CS_POCP(i,1) = (Soda(i,1)*soda_POCP) + (Energy(i,1)*energy_POCP); %Photochemical ozone creation potential
     CS_PEU(i,1) = (Soda(i,1)*soda_PEU) + (Energy(i,1)*energy_PEU); %Fossil Fuel Depletion
+    CS_CAR(i,1) = (Soda(i,1)*soda_CAR) + (Energy(i,1)*energy_CAR); %Carcinogenics
+    CS_NCAR(i,1) = (Soda(i,1)*soda_NCAR) + (Energy(i,1)*energy_NCAR); %Non-carcinogenics
+    CS_RES(i,1) = (Soda(i,1)*soda_RES) + (Energy(i,1)*energy_RES); %Respiratory effects
+    CS_ETX(i,1) = (Soda(i,1)*soda_ETX) + (Energy(i,1)*energy_ETX); %Ecotoxicity
 
 end
-    
+
+%% Output
+
 %Saves the energy, caustic soda, and soda ash required to a file ***need to
 %add environmental impact factors to an excel file***
 csvwrite('CausticSoda_Caustic.csv', Caustic);
@@ -146,6 +162,10 @@ csvwrite('CausticSoda_GWP.csv', CS_GWP);
 csvwrite('CausticSoda_ODP.csv', CS_ODP);
 csvwrite('CausticSoda_POCP.csv', CS_POCP);
 csvwrite('CausticSoda_PEU.csv', CS_PEU);
+csvwrite('CausticSoda_CAR.csv', CS_CAR);
+csvwrite('CausticSoda_NCAR.csv', CS_NCAR);
+csvwrite('CausticSoda_RES.csv', CS_RES);
+csvwrite('CausticSoda_ETX.csv', CS_ETX);
 csvwrite('Mg.csv', Mg);
 
 %Writes average (median) environmental impact factors to screen
@@ -155,5 +175,7 @@ disp(median(CS_GWP))
 disp(median(CS_ODP))
 disp(median(CS_POCP))
 disp(median(CS_PEU))
-
-toc
+disp(median(CS_CAR))
+disp(median(CS_NCAR))
+disp(median(CS_RES))
+disp(median(CS_ETX))

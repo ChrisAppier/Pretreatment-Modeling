@@ -13,8 +13,6 @@
 %coefficients (K). Five cations are studied in this experiment - sodium,
 %barium, strontium, calcium, and magnesium.
 
-clc
-clear
 tic
 %warning('off', 'all')
 
@@ -55,27 +53,30 @@ KSN = 2.62;
 KCN = 1.89;
 KMN = 1.48;
 
-%Contaminant limits (meq/L) (Condition 1) [This corresponds to the first
-%value of the contaminant_input.mat variables]
+%Contaminant limits (meq/L)
 Ca_limit = Ca_ends;
 Mg_limit = 10000000; %no limit
 Ba_limit = Ba_ends;
 Sr_limit = Sr_ends;
 
 %Defining the LCA data values
-PSS_AP = 45.38*0.00706 + 0.513*0.0117; %Acidification potential (kg SO2 eq per kg soda/lime)
-PSS_EP = 45.38*0.000729 + 0.513*0.0012; %Eutrophication potential (kg N eq per kg soda/lime)
-PSS_GWP = 45.38*0.098 + 0.513*3.59; %Global warming potential (kg CO2 eq per kg soda/lime)
-PSS_ODP = 45.38*4.59*10^(-8) + 0.513*2.05*10^(-8); %Ozone depletion potential (kg CFC-11 eq per kg soda/lime)
-PSS_POCP = 45.38*0.0187 + 0.513*0.146; %Photochemical ozone creation potential (kg O3 eq per kg soda/lime)
-PSS_PEU = 45.38*0.979 + 0.513*12.1; %Primary energy use (MJ surplus per soda/lime)
+PSS_AP = 45.38*0.00706 + 0.513*0.0117; %Acidification potential (kg SO2 eq per kg PSS)
+PSS_EP = 45.38*0.000729 + 0.513*0.0012; %Eutrophication potential (kg N eq per kg PSS)
+PSS_GWP = 45.38*0.098 + 0.513*3.59; %Global warming potential (kg CO2 eq per kg PSS)
+PSS_ODP = 45.38*4.59*10^(-8) + 0.513*2.05*10^(-8); %Ozone depletion potential (kg CFC-11 eq per kg PSS)
+PSS_POCP = 45.38*0.0187 + 0.513*0.146; %Photochemical ozone creation potential (kg O3 eq per kg PSS)
+PSS_PEU = 45.38*0.979 + 0.513*12.1; %Primary energy use (MJ surplus per kg PSS)
+PSS_CAR = 45.38*1.48*10^(-8) + 0.513*9.15*10^(-8); %Carcinogenics (CTUh per kg PSS)
+PSS_NCAR = 45.38*0.000000124 + 0.513*0.000000107; %Non-carcinogenics (CTUh per kg PSS)
+PSS_RES = 45.38*0.000496 + 0.513*0.0000904; %Respiratory effects (kg PM2.5 eq per kg PSS)
+PSS_ETX = 45.38*3.03 + 0.513*7.84; %Ecotoxicity (CTUe per kg PSS)
 
 %m = number of segments the column is divided into + 1 (for initial
 %conditions). n = initial estimate for the number of bed volumes treated
 %(code stops on breakthrough of contaminant at a given level set above). 
 %l = number of data points for each contaminant.
 m = 20;
-n = m*500;
+n = m*50;
 l = 10000;
 bed_volumes = zeros(l,1);
 Mg_ends = zeros(l,1);
@@ -85,19 +86,13 @@ GWP = zeros(l,1);
 ODP = zeros(l,1);
 POCP = zeros(l,1);
 PEU = zeros(l,1);
+CAR = zeros(l,1);
+NCAR = zeros(l,1);
+RES = zeros(l,1);
+ETX = zeros(l,1);
+
 resin_used = zeros(l,1);
 res_den = 801; %g/l Sigma Aldrich
-
-%Finds influent waters that have all concentrations below the limit and
-%sets them to zero to separate out later
-parfor k=1:l
-    if Ba_Inf(k)<Ba_limit(k) && Sr_Inf(k)<Sr_limit(k) && Ca_Inf(k)<Ca_limit(k)
-        Ba_Inf(k) = 0;
-        Sr_Inf(k) = 0;
-        Ca_Inf(k) = 0;
-        Mg_Inf(k) = 0;
-    end
-end
 
 %% SOLVER FUNCTION
 parfor k=1:l
@@ -120,6 +115,10 @@ parfor k=1:l
             
     for i=1:n
 
+        if i == n
+            disp('bruh')
+        end
+        
         for j=1:m
 %Initial condition of virgin resin (preloaded with Na)                                               
             RESINNa(1,1:m) = TR;
@@ -188,16 +187,9 @@ parfor k=1:l
 
 %Ends the modeling if one of the contaminants is above the set limit and
 %announces the concentration
-            if Ba_avg(i) > Ba_limit(k,1) || Sr_avg(i) > Sr_limit(k,1) || Ca_avg(i) > Ca_limit(k,1) || Mg_avg(i) > Mg_limit
+            if Ba_avg(i) > Ba_limit(k,1) || Sr_avg(i) > Sr_limit(k,1) || Ca_avg(i) > Ca_limit(k,1)
                  break
             end 
-            
-%Sets the bed volume higher than the highest guess if the incoming water sample
-%has influent concentrations below the limits
-            if Ba_Inf(k)==0 && Sr_Inf(k)==0 && Ca_Inf(k)==0 && Mg_Inf(k)==0    
-                bed_volumes(k,1) = 10001;
-                break
-            end
             
 %Stores the number of bed volumes completed and Mg end          
             bed_volumes(k,1) = i/m;
@@ -214,12 +206,15 @@ parfor k=1:l
     ODP(k,1) = resin_used(k,1)*PSS_ODP; %Ozone depletion potential
     POCP(k,1) = resin_used(k,1)*PSS_POCP; %Photochemical ozone creation potential
     PEU(k,1) = resin_used(k,1)*PSS_PEU; %Primary energy use
-
+    CAR(k,1) = resin_used(k,1)*PSS_CAR; %Carcinogenics
+    NCAR(k,1) = resin_used(k,1)*PSS_CAR; %Non-carcinogenics
+    RES(k,1) = resin_used(k,1)*PSS_CAR; %Respiratory effects
+    ETX(k,1) = resin_used(k,1)*PSS_CAR; %Ecotoxicity
 end
-%% Output
+%% Debug
 
 %Outputting final answer to command window
-BV = bed_volumes;
+%BV = bed_volumes;
 
 %Plotting initial water packet pollutant concentrations moving through the
 %column number set below
@@ -281,7 +276,9 @@ BV = bed_volumes;
 %csvwrite('Na_Resin_Matrix.csv', RESINNa);
 %csvwrite('Sr_Resin_Matrix.csv', RESINSr);
 %csvwrite('Mg_Resin_Matrix.csv', RESINMg);
-                                                                 
+
+
+%% Output 
 %Saves the bed volumes, rounded down to the nearest whole number, to a file
 %Also saves Mg_limit for use in other models
 csvwrite('IEPSS_BedVolumes.csv', bed_volumes);
@@ -292,6 +289,10 @@ csvwrite('IEPSS_GWP.csv', GWP);
 csvwrite('IEPSS_ODP.csv', ODP);
 csvwrite('IEPSS_POCP.csv', POCP);
 csvwrite('IEPSS_PEU.csv', PEU);
+csvwrite('IEPSS_CAR.csv', CAR);
+csvwrite('IEPSS_NCAR.csv', NCAR);
+csvwrite('IEPSS_RES.csv', RES);
+csvwrite('IEPSS_ETX.csv', ETX);
 
 %Writes average (median) environmental impact factors to screen
 disp(median(AP))
@@ -300,5 +301,9 @@ disp(median(GWP))
 disp(median(ODP))
 disp(median(POCP))
 disp(median(PEU))
+disp(median(CAR))
+disp(median(NCAR))
+disp(median(RES))
+disp(median(ETX))
 
 toc

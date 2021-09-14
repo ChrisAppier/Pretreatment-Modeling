@@ -3,6 +3,9 @@
 
 clc
 
+%Establishing number of data points to generate
+n = 30000;
+
 %Loading alkalinity data calculated using the AlkCalc script
 load('Alk_data')
 
@@ -24,13 +27,13 @@ Na_sample = Na_sample / (1000 * 22.99);
 SO4_sample = SO4_sample / (1000 * 96.056);
 
 %Creating distributions based on the USGS water data
-Ba_input = lhs_empir(Ba_sample, 10000);
-Sr_input = lhs_empir(Sr_sample, 10000);
-Ca_input = lhs_empir(Ca_sample, 10000);
-Mg_input = lhs_empir(Mg_sample, 10000);
-Na_input = lhs_empir(Na_sample, 10000);
-SO4_input = lhs_empir(SO4_sample, 10000);
-Alk_input = lhs_empir(Alk_sample, 10000);
+Ba_input = lhs_empir(Ba_sample, n);
+Sr_input = lhs_empir(Sr_sample, n);
+Ca_input = lhs_empir(Ca_sample, n);
+Mg_input = lhs_empir(Mg_sample, n);
+Na_input = lhs_empir(Na_sample, n);
+SO4_input = lhs_empir(SO4_sample, n);
+Alk_input = lhs_empir(Alk_sample, n);
 
 %Saving the LHC distributions to matlab files
 save Ba_input.mat Ba_input;

@@ -2,8 +2,6 @@
 %calcium, magnesium, barium, and strontium hardness in water. Strontium
 %removal is through substitution with calcium.
 
-tic
-
 %Loading the input data files as mol/L
 
 load('Ca_input')
@@ -38,6 +36,14 @@ soda_POCP = 0.0708;
 lime_POCP = 0.0231; %Photochemical ozone creation potential (kg O3 eq per kg soda/lime)
 soda_PEU = 1.67;
 lime_PEU = 0.717; %Primary energy use (MJ surplus per soda/lime)
+soda_CAR = 6.43*10^(-08);
+lime_CAR = 6.68*10^(-9); %Carcinogenics (CTUh per kg soda/lime)
+soda_NCAR = 4.36*10^(-7);
+lime_NCAR = 4.30*10^(-8); %Non-carcinogenics (CTUh per kg soda/lime)
+soda_RES = 0.001;
+lime_RES = 0.000221; %Respiratory effects (kg PM2.5 eq per kg soda/lime)
+soda_ETX = 10.9;
+lime_ETX = 1.02; %Ecotoxicity (CTUe per kg soda/lime)
 
 %Setting the number of data points in the files (n) and preallocating
 %vectors
@@ -52,6 +58,10 @@ LSA_GWP = zeros(n,1);
 LSA_ODP = zeros(n,1);
 LSA_POCP = zeros(n,1);
 LSA_PEU = zeros(n,1);
+LSA_CAR = zeros(n,1);
+LSA_NCAR = zeros(n,1);
+LSA_RES = zeros(n,1);
+LSA_ETX = zeros(n,1);
 
 %Generating a uniform distribution for the "inefficiency factor" found by
 %comparing experimental data to model results
@@ -126,6 +136,10 @@ for i = 1:n
     LSA_ODP(i,1) = (Lime(i,1)*lime_ODP) + (Soda(i,1)*soda_ODP); %Ozone depletion potential
     LSA_POCP(i,1) = (Lime(i,1)*lime_POCP) + (Soda(i,1)*soda_POCP); %Photochemical ozone creation potential
     LSA_PEU(i,1) = (Lime(i,1)*lime_PEU) + (Soda(i,1)*soda_PEU); %Primary energy use
+    LSA_CAR(i,1) = (Lime(i,1)*lime_CAR) + (Soda(i,1)*soda_CAR); %Carcinogenics
+    LSA_NCAR(i,1) = (Lime(i,1)*lime_NCAR) + (Soda(i,1)*soda_NCAR); %Non-carcinogenics
+    LSA_RES(i,1) = (Lime(i,1)*lime_RES) + (Soda(i,1)*soda_RES); %Respiratory effects
+    LSA_ETX(i,1) = (Lime(i,1)*lime_ETX) + (Soda(i,1)*soda_ETX); %Ecotoxicity
     
 %Calculates the amount of Sr left in water
     
@@ -136,6 +150,8 @@ for i = 1:n
     
 end
 
+%% Output
+
 %Saves the lime and soda ash required to a file
 csvwrite('LimeSodaAsh_Lime.csv', Lime);
 csvwrite('LimeSodaAsh_Soda.csv', Soda);
@@ -145,6 +161,10 @@ csvwrite('LimeSodaAsh_GWP.csv', LSA_GWP);
 csvwrite('LimeSodaAsh_ODP.csv', LSA_ODP);
 csvwrite('LimeSodaAsh_POCP.csv', LSA_POCP);
 csvwrite('LimeSodaAsh_PEU.csv', LSA_PEU);
+csvwrite('LimeSodaAsh_CAR.csv', LSA_CAR);
+csvwrite('LimeSodaAsh_NCAR.csv', LSA_NCAR);
+csvwrite('LimeSodaAsh_RES.csv', LSA_RES);
+csvwrite('LimeSodaAsh_ETX.csv', LSA_ETX);
 
 %Writes average (median) environmental impact factors to screen
 disp(median(LSA_AP))
@@ -153,5 +173,7 @@ disp(median(LSA_GWP))
 disp(median(LSA_ODP))
 disp(median(LSA_POCP))
 disp(median(LSA_PEU))
-
-toc
+disp(median(LSA_CAR))
+disp(median(LSA_NCAR))
+disp(median(LSA_RES))
+disp(median(LSA_ETX))
