@@ -96,22 +96,6 @@ Na_input = lhs_empir(Na_sample, n);
 SO4_input = lhs_empir(SO4_sample, n);
 Alk_input = lhs_empir(Alk_sample, n);
 
-%Saving the LHC distributions to matlab files
-save Ba_input.mat Ba_input;
-save Sr_input.mat Sr_input;
-save Ca_input.mat Ca_input;
-save Mg_input.mat Mg_input;
-save Na_input.mat Na_input;
-save SO4_input.mat SO4_input;
-save Alk_input.mat Alk_input;
-csvwrite('Ba_input.csv', Ba_input);
-csvwrite('Sr_input.csv', Sr_input);
-csvwrite('Ca_input.csv', Ca_input);
-csvwrite('Mg_input.csv', Mg_input);
-csvwrite('Na_input.csv', Na_input);
-csvwrite('SO4_input.csv', SO4_input);
-csvwrite('Alk_input.csv', Alk_input);
-
 %Plotting the original and untrimmed generated data sets
 figure
 subplot(2,4,1); histogram(Ba_input, nbin); title('Barium Generated'); xlabel('mg/L'); ylabel('Count');
@@ -172,11 +156,6 @@ for i=1:n
 
 end
 
-%Saving limits to output file
-csvwrite('Ca_ends', Ca_ends);
-csvwrite('Ba_ends', Ba_ends);
-csvwrite('Sr_ends', Sr_ends);
-
 %% Clean Water Removal
 
 %l keeps track of the new data set index. Mg is not used for this because
@@ -193,6 +172,7 @@ Ba_input_nz = zeros(m,1);
 Sr_input_nz = zeros(m,1);
 Alk_input_nz = zeros(m,1);
 Na_input_nz = zeros(m,1);
+SO4_input_nz = zeros(m,1);
 Ca_ends_nz = zeros(m,1);
 Mg_ends_nz = zeros(m,1);
 Ba_ends_nz = zeros(m,1);
@@ -208,6 +188,7 @@ for i = 1:n
         Sr_input_nz(l) = Sr_input(i);
         Na_input_nz(l) = Na_input(i);
         Alk_input_nz(l) = Alk_input(i);
+        SO4_input_nz(l) = SO4_input(i);
         Ca_ends_nz(l) = Ca_ends(i);
         Ba_ends_nz(l) = Ba_ends(i);
         Sr_ends_nz(l) = Sr_ends(i);
@@ -231,6 +212,7 @@ Mg_input = zeros(m,1);
 Ba_input = zeros(m,1);
 Sr_input = zeros(m,1);
 Alk_input = zeros(m,1);
+SO4_input = zeros(m,1);
 
 %Transferring data to original vectors
 Ca_ends = Ca_ends_nz;
@@ -242,6 +224,26 @@ Ba_input = Ba_input_nz;
 Sr_input = Sr_input_nz;
 Na_input = Na_input_nz;
 Alk_input = Alk_input_nz;
+SO4_input = SO4_input_nz;
+
+%Saving the data
+save Ba_input.mat Ba_input;
+save Sr_input.mat Sr_input;
+save Ca_input.mat Ca_input;
+save Mg_input.mat Mg_input;
+save Na_input.mat Na_input;
+save SO4_input.mat SO4_input;
+save Alk_input.mat Alk_input;
+save Ca_ends.mat Ca_ends;
+save Ba_ends.mat Ba_ends;
+save Sr_ends.mat Sr_ends;
+csvwrite('Ba_input.csv', Ba_input);
+csvwrite('Sr_input.csv', Sr_input);
+csvwrite('Ca_input.csv', Ca_input);
+csvwrite('Mg_input.csv', Mg_input);
+csvwrite('Na_input.csv', Na_input);
+csvwrite('SO4_input.csv', SO4_input);
+csvwrite('Alk_input.csv', Alk_input);
 
 %Plots the trimmed generated data
 figure
