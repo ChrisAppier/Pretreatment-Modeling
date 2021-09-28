@@ -197,7 +197,7 @@ parfor k=1:l
     end
 
 %Calculates amount of resin used per volume water (kg/m^3)
-    resin_used(k,1) = res_den * 1000 / bed_volumes(k,1);
+    resin_used(k,1) = res_den / bed_volumes(k,1);
 
 %Calculates emissions impacts
     AP(k,1) = resin_used(k,1)*PSS_AP; %Acidification potential

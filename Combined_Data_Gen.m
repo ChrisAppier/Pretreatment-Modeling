@@ -98,7 +98,7 @@ Alk_input = lhs_empir(Alk_sample, n);
 
 %Plotting the original and untrimmed generated data sets
 figure
-subplot(2,4,1); histogram(Ba_input, nbin); title('Barium Generated'); xlabel('mg/L'); ylabel('Count');
+subplot(2,4,1); histogram(Ba_input, nbin); title('Barium Generated'); xlabel('mg/L'); ylabel('Count');%Fix labels******************
 subplot(2,4,2); histogram(Sr_input, nbin); title('Strontium Generated'); xlabel('mg/L'); ylabel('Count');
 subplot(2,4,3); histogram(Ca_input, nbin); title('Calcium Generated'); xlabel('mg/L'); ylabel('Count');
 subplot(2,4,4); histogram(Mg_input, nbin); title('Magnesium Generated'); xlabel('mg/L'); ylabel('Count');
@@ -152,7 +152,7 @@ for i=1:n
         
     Sr_sat = Ksp_Sr/rej; %mol/l
     Sr_ends(i) = Sr_sat*(1-rec)/sel; %mol/l
-    Sr_ends(i) = 2*1000*Sr_ends(i); %meq/l
+    Sr_ends(i) = 2*1000*Sr_ends(i); %meq/l %stop doing meq/l**************
 
 end
 
@@ -254,3 +254,8 @@ subplot(2,4,4); histogram(Mg_input, nbin); title('Trimmed Magnesium Generated');
 subplot(2,4,5); histogram(Na_input, nbin); title('Trimmed Sodium Generated'); xlabel('mg/L'); ylabel('Count');
 subplot(2,4,6); histogram(SO4_input, nbin); title('Trimmed Sulfate Generated'); xlabel('mg/L'); ylabel('Count');
 subplot(2,4,7); histogram(Alk_input, nbin); title('Trimmed Alkalinity Generated'); xlabel('mg/L'); ylabel('Count');
+
+%Debug
+disp(mean(Ca_ends))
+disp(mean(Ba_ends))
+disp(mean(Sr_ends))

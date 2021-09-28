@@ -70,6 +70,12 @@ CS_ETX = zeros(n,1);
 caustic_inefficiency = uni_dist(n, 1.64, 2.13);
 soda_inefficiency = uni_dist(n, 0.77, 1.80);
 
+
+%Debug variables
+Ca_z = 0;
+Mg_z = 0;
+Ba_z = 0;
+Sr_z = 0;
 %% Main loop
 
 for i = 1:n
@@ -79,18 +85,22 @@ for i = 1:n
     Ca = Ca_input(i,1) - Ca_end(i,1);
     if Ca < 0
         Ca = 0;
+        Ca_z = Ca_z+1;
     end
     Mg = Mg_input(i,1) - Mg_end(i,1);    
     if Mg < 0
         Mg = 0;
+        Mg_z = Mg_z+1;
     end
     Ba = Ba_input(i,1) - Ba_end(i,1);    
     if Ba < 0
         Ba = 0;
+        Ba_z = Ba_z+1;
     end
     Sr = Sr_input(i,1) - Sr_end(i,1);    
     if Sr < 0
         Sr = 0;
+        Sr_z = Sr_z+1;
     end
 
 %Calculates carbonate hardness (CCa and CMg) and non-carbonate hardness
@@ -179,3 +189,9 @@ disp(median(CS_CAR))
 disp(median(CS_NCAR))
 disp(median(CS_RES))
 disp(median(CS_ETX))
+
+%Debug Output
+disp(Ca_z)
+disp(Mg_z)
+disp(Ba_z)
+disp(Sr_z)
