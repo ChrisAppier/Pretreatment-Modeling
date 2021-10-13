@@ -10,8 +10,9 @@
 %the column and are known as packets of water (n). Each packet of water is
 %assumed to be in instantaneous equilibrium with the column. The
 %equilibrium of the cations with the column is determined by the equilbrium
-%coefficients (K). Five cations are studied in this experiment - sodium,
-%barium, strontium, calcium, and magnesium.
+%coefficients (K). After the concentration in the blended water output reaches
+%the limit, calculations are ended. Five cations are studied in this experiment
+%- sodium, barium, strontium, calcium, and magnesium.
 
 tic
 %warning('off', 'all')
@@ -41,6 +42,9 @@ Sr_Inf = Sr_input * Sr_meq;
 Ca_Inf = Ca_input * Ca_meq;
 Mg_Inf = Mg_input * Mg_meq;
 Na_Inf = Na_input * Na_meq;
+Ca_ends = Ca_ends * Ca_meq;
+Ba_ends = Ba_ends * Ba_meq;
+Sr_ends = Sr_ends * Sr_meq;
 
 %Number of resin sites (meq/L) in each column
 TR = 4325; 

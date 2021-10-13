@@ -19,7 +19,7 @@ CO3 = xlsread('waterdata.xlsx','CF2:CF274');
 pH = xlsread('waterdata.xlsx','BG2:BG274');
 
 %Checks the number of data points
-HCO3_size = size(HCO3,1); %may need to swap 1 and vector%
+HCO3_size = size(HCO3,1);
 CO3_size = size(CO3,1);
 pH_size = size(pH,1);
 
@@ -78,6 +78,7 @@ Mg_sample = xlsread('waterdata.xlsx','DA2:DA274');
 Na_sample = xlsread('waterdata.xlsx','DK2:DK274');
 SO4_sample = xlsread('waterdata.xlsx','DV2:DV274');
 Alk_sample = Alk;
+HCO3_sample = HCO3;
 
 %Converting the data from mg/L to mol/L
 Ba_sample = Ba_sample / (1000 * 137.33);
@@ -86,6 +87,7 @@ Sr_sample = Sr_sample / (1000 * 87.62);
 Mg_sample = Mg_sample / (1000 * 24.305);
 Na_sample = Na_sample / (1000 * 22.99);
 SO4_sample = SO4_sample / (1000 * 96.056);
+HCO3_sample = HCO3_sample / (1000 * 61);
 
 %Creating distributions based on the USGS water data
 Ba_input = lhs_empir(Ba_sample, n);
@@ -95,27 +97,32 @@ Mg_input = lhs_empir(Mg_sample, n);
 Na_input = lhs_empir(Na_sample, n);
 SO4_input = lhs_empir(SO4_sample, n);
 Alk_input = lhs_empir(Alk_sample, n);
+HCO3_input = lhs_empir(HCO3_sample, n);
 
 %Plotting the original and untrimmed generated data sets
 figure
-subplot(2,4,1); histogram(Ba_input, nbin); title('Barium Generated'); xlabel('mg/L'); ylabel('Count');%Fix labels******************
-subplot(2,4,2); histogram(Sr_input, nbin); title('Strontium Generated'); xlabel('mg/L'); ylabel('Count');
-subplot(2,4,3); histogram(Ca_input, nbin); title('Calcium Generated'); xlabel('mg/L'); ylabel('Count');
-subplot(2,4,4); histogram(Mg_input, nbin); title('Magnesium Generated'); xlabel('mg/L'); ylabel('Count');
-subplot(2,4,5); histogram(Na_input, nbin); title('Sodium Generated'); xlabel('mg/L'); ylabel('Count');
-subplot(2,4,6); histogram(SO4_input, nbin); title('Sulfate Generated'); xlabel('mg/L'); ylabel('Count');
-subplot(2,4,7); histogram(Alk_input, nbin); title('Alkalinity Generated'); xlabel('mg/L'); ylabel('Count');
+subplot(2,4,1); histogram(Ba_input, nbin); title('Barium Generated'); xlabel('mol/L'); ylabel('Count');
+subplot(2,4,2); histogram(Sr_input, nbin); title('Strontium Generated'); xlabel('mol/L'); ylabel('Count');
+subplot(2,4,3); histogram(Ca_input, nbin); title('Calcium Generated'); xlabel('mol/L'); ylabel('Count');
+subplot(2,4,4); histogram(Mg_input, nbin); title('Magnesium Generated'); xlabel('mol/L'); ylabel('Count');
+subplot(2,4,5); histogram(Na_input, nbin); title('Sodium Generated'); xlabel('mol/L'); ylabel('Count');
+subplot(2,4,6); histogram(SO4_input, nbin); title('Sulfate Generated'); xlabel('mol/L'); ylabel('Count');
+subplot(2,4,7); histogram(Alk_input, nbin); title('Alkalinity Generated'); xlabel('mol/L'); ylabel('Count');
+subplot(2,4,8); histogram(HCO3_input, nbin); title('Bicarbonate Generated'); xlabel('mol/L'); ylabel('Count');
 
 figure
-subplot(2,4,1); histogram(Ba_sample, nbin); title('Barium Original'); xlabel('mg/L'); ylabel('Count');
-subplot(2,4,2); histogram(Sr_sample, nbin); title('Strontium Original'); xlabel('mg/L'); ylabel('Count');
-subplot(2,4,3); histogram(Ca_sample, nbin); title('Calcium Original'); xlabel('mg/L'); ylabel('Count');
-subplot(2,4,4); histogram(Mg_sample, nbin); title('Magnesium Original'); xlabel('mg/L'); ylabel('Count');
-subplot(2,4,5); histogram(Na_sample, nbin); title('Sodium Original'); xlabel('mg/L'); ylabel('Count');
-subplot(2,4,6); histogram(SO4_sample, nbin); title('Sulfate Original'); xlabel('mg/L'); ylabel('Count');
-subplot(2,4,7); histogram(Alk_sample, nbin); title('Alkalinity Original'); xlabel('mg/L'); ylabel('Count');
+subplot(2,4,1); histogram(Ba_sample, nbin); title('Barium Original'); xlabel('mol/L'); ylabel('Count');
+subplot(2,4,2); histogram(Sr_sample, nbin); title('Strontium Original'); xlabel('mol/L'); ylabel('Count');
+subplot(2,4,3); histogram(Ca_sample, nbin); title('Calcium Original'); xlabel('mol/L'); ylabel('Count');
+subplot(2,4,4); histogram(Mg_sample, nbin); title('Magnesium Original'); xlabel('mol/L'); ylabel('Count');
+subplot(2,4,5); histogram(Na_sample, nbin); title('Sodium Original'); xlabel('mol/L'); ylabel('Count');
+subplot(2,4,6); histogram(SO4_sample, nbin); title('Sulfate Original'); xlabel('mol/L'); ylabel('Count');
+subplot(2,4,7); histogram(Alk_sample, nbin); title('Alkalinity Original'); xlabel('mol/L'); ylabel('Count');
+subplot(2,4,8); histogram(HCO3_sample, nbin); title('Bicarbonate Original'); xlabel('mol/L'); ylabel('Count');
 
 %% Limit Calculator
+
+%SO4 Based Limits
 
 %Converting SO4_input to mg/l
 SO4_input = SO4_input * 96.056 * 1000;
@@ -125,13 +132,12 @@ mass = SO4_input; %Mass
 vol = 1; %Volume
 sel = 0.95; %SO4 selectivity
 rec = 0.5; %Recovery
-Ksp_Ca = 6.91831*10^(-5); %Ca selectivity
-Ksp_Ba = 1.0842*10^(-10); %Ba selectivity
-Ksp_Sr = 3.44*10^(-7); %Sr selectivity 
+Ksp_SO4_Ca = 6.91831*10^(-5); %Ca selectivity
+Ksp_SO4_Ba = 1.0842*10^(-10); %Ba selectivity
+Ksp_SO4_Sr = 3.44*10^(-7); %Sr selectivity 
 Ca_ends = zeros(n,1);
 Ba_ends = zeros(n,1);
 Sr_ends = zeros(n,1);
-SO4 = zeros(n,1);
 
 %Main loop
 for i=1:n
@@ -142,17 +148,60 @@ for i=1:n
 
     rej = rej / (96*1000); %mol/l
 
-    Ca_sat = Ksp_Ca/rej; %mol/l
+    Ca_sat = Ksp_SO4_Ca/rej; %mol/l
     Ca_ends(i) = Ca_sat*(1-rec)/sel; %mol/l
-    Ca_ends(i) = 2*1000*Ca_ends(i); %meq/l
     
-    Ba_sat = Ksp_Ba/rej; %mol/l
+    Ba_sat = Ksp_SO4_Ba/rej; %mol/l
     Ba_ends(i) = Ba_sat*(1-rec)/sel; %mol/l
-    Ba_ends(i) = 2*1000*Ba_ends(i); %meq/l
         
-    Sr_sat = Ksp_Sr/rej; %mol/l
+    Sr_sat = Ksp_SO4_Sr/rej; %mol/l
     Sr_ends(i) = Sr_sat*(1-rec)/sel; %mol/l
-    Sr_ends(i) = 2*1000*Sr_ends(i); %meq/l %stop doing meq/l**************
+
+end
+
+%HCO3 Based Limits, only used if higher than SO4 limits
+
+%Converting HCO3_input to mg/l
+HCO3_input = HCO3_input * 1000 * 61; 
+
+%Constants
+mass = HCO3_input; %Mass
+vol = 1; %Volume
+sel = 0.95; %SO4 selectivity
+rec = 0.5; %Recovery
+Ksp_HCO3_Ca = 3.3*10^(-9); %Ca selectivity
+Ksp_HCO3_Ba = 2.58*10^(-9); %Ba selectivity
+Ksp_HCO3_Sr = 5.6*10^(-10); %Sr selectivity 
+Ca_ends = zeros(n,1);
+Ba_ends = zeros(n,1);
+Sr_ends = zeros(n,1);
+
+%Main loop
+for i=1:n
+    
+    perm = (1-sel)*mass(i);
+
+    rej = (mass(i)-perm)/((1-rec)*vol); %mg/l
+
+    rej = rej / (61*1000); %mol/l
+
+    Ca_sat = Ksp_HCO3_Ca/rej; %mol/l
+    
+    if Ca_sat*(1-rec)/sel > Ca_ends(i)
+    Ca_ends(i) = Ca_sat*(1-rec)/sel; %mol/l
+    end
+    
+    Ba_sat = Ksp_HCO3_Ba/rej; %mol/l
+    
+    if Ba_sat*(1-rec)/sel > Ba_ends(i)
+    Ba_ends(i) = Ba_sat*(1-rec)/sel; %mol/l
+    end
+        
+    Sr_sat = Ksp_HCO3_Sr/rej; %mol/l
+    
+    if Sr_sat*(1-rec)/sel > Sr_ends(i)
+    Sr_ends(i) = Sr_sat*(1-rec)/sel; %mol/l
+    end
 
 end
 
@@ -226,7 +275,7 @@ Na_input = Na_input_nz;
 Alk_input = Alk_input_nz;
 SO4_input = SO4_input_nz;
 
-%Saving the data
+%Saving the data (mol/l)
 save Ba_input.mat Ba_input;
 save Sr_input.mat Sr_input;
 save Ca_input.mat Ca_input;
@@ -247,15 +296,19 @@ csvwrite('Alk_input.csv', Alk_input);
 
 %Plots the trimmed generated data
 figure
-subplot(2,4,1); histogram(Ba_input, nbin); title('Trimmed Barium Generated'); xlabel('mg/L'); ylabel('Count');
-subplot(2,4,2); histogram(Sr_input, nbin); title('Trimmed Strontium Generated'); xlabel('mg/L'); ylabel('Count');
-subplot(2,4,3); histogram(Ca_input, nbin); title('Trimmed Calcium Generated'); xlabel('mg/L'); ylabel('Count');
-subplot(2,4,4); histogram(Mg_input, nbin); title('Trimmed Magnesium Generated'); xlabel('mg/L'); ylabel('Count');
-subplot(2,4,5); histogram(Na_input, nbin); title('Trimmed Sodium Generated'); xlabel('mg/L'); ylabel('Count');
-subplot(2,4,6); histogram(SO4_input, nbin); title('Trimmed Sulfate Generated'); xlabel('mg/L'); ylabel('Count');
-subplot(2,4,7); histogram(Alk_input, nbin); title('Trimmed Alkalinity Generated'); xlabel('mg/L'); ylabel('Count');
+subplot(2,4,1); histogram(Ba_input, nbin); title('Trimmed Barium Generated'); xlabel('mol/L'); ylabel('Count');
+subplot(2,4,2); histogram(Sr_input, nbin); title('Trimmed Strontium Generated'); xlabel('mol/L'); ylabel('Count');
+subplot(2,4,3); histogram(Ca_input, nbin); title('Trimmed Calcium Generated'); xlabel('mol/L'); ylabel('Count');
+subplot(2,4,4); histogram(Mg_input, nbin); title('Trimmed Magnesium Generated'); xlabel('mol/L'); ylabel('Count');
+subplot(2,4,5); histogram(Na_input, nbin); title('Trimmed Sodium Generated'); xlabel('mol/L'); ylabel('Count');
+subplot(2,4,6); histogram(SO4_input, nbin); title('Trimmed Sulfate Generated'); xlabel('mol/L'); ylabel('Count');
+subplot(2,4,7); histogram(Alk_input, nbin); title('Trimmed Alkalinity Generated'); xlabel('mol/L'); ylabel('Count');
+subplot(2,4,8); histogram(HCO3_input, nbin); title('Trimmed Bicarbonate Generated'); xlabel('mol/L'); ylabel('Count');
 
 %Debug
+disp('Ca Limit (mol/L): ') 
 disp(mean(Ca_ends))
+disp('Ba Limit (mol/L): ') 
 disp(mean(Ba_ends))
+disp('Sr Limit (mol/L): ') 
 disp(mean(Sr_ends))
