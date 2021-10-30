@@ -2,14 +2,14 @@
 %and outputs some statistics and graphs
 
 %Loading input/output values
-load(Ca_input)
-load(Mg_input)
-load(Ba_input)
-load(Sr_input)
-load(Ca_ends)
-load(Mg_ends)
-load(Ba_ends)
-load(Sr_ends)
+load('Ca_input')
+load('Mg_input')
+load('Ba_input')
+load('Sr_input')
+load('Ca_ends')
+load('Mg_ends')
+load('Ba_ends')
+load('Sr_ends')
 
 %Loading IEPSS model outputs
 IEPSS_AP = csvread('IEPSS_AP.csv');
