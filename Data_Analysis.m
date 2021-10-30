@@ -7,7 +7,7 @@ load('Mg_input')
 load('Ba_input')
 load('Sr_input')
 load('Ca_ends')
-load('Mg_ends')
+%load('Mg_ends')
 load('Ba_ends')
 load('Sr_ends')
 
@@ -22,7 +22,7 @@ IEPSS_CAR = csvread('IEPSS_CAR.csv');
 IEPSS_NCAR = csvread('IEPSS_NCAR.csv');
 IEPSS_RES = csvread('IEPSS_RES.csv');
 IEPSS_ETX = csvread('IEPSS_ETX.csv');
-IEPSS_Mg_ends = csvread('Mg_ends.csv');
+%IEPSS_Mg_ends = csvread('Mg_ends.csv');
 
 %Loading lime soda ash model outputs
 LimeSodaAsh_AP = csvread('LimeSodaAsh_AP.csv');
@@ -71,7 +71,7 @@ mean(IEPSS_CAR)
 mean(IEPSS_NCAR)
 mean(IEPSS_RES)
 mean(IEPSS_ETX)
-mean(IEPSS_Mg_ends)
+%mean(IEPSS_Mg_ends)
 
 %Calculating the averages of the lime soda ash model output
 mean(LimeSodaAsh_AP)
