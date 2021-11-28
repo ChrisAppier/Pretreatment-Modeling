@@ -286,10 +286,12 @@ end
 %Saves the bed volumes, rounded down to the nearest whole number, to a file
 %Also saves Mg_limit for use in other models
 csvwrite('IEPSS_BedVolumes.csv', bed_volumes);
-csvwrite('Mg_ends', Mg_ends);
+csvwrite('Mg_ends.csv', Mg_ends);
 csvwrite('IEPSS_AP.csv', AP);
 csvwrite('IEPSS_EP.csv', EP);
 csvwrite('IEPSS_GWP.csv', GWP);
+
+
 csvwrite('IEPSS_ODP.csv', ODP);
 csvwrite('IEPSS_POCP.csv', POCP);
 csvwrite('IEPSS_PEU.csv', PEU);
