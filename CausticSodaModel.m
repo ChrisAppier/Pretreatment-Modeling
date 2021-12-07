@@ -191,7 +191,7 @@ disp(median(CS_RES))
 disp(median(CS_ETX))
 
 %Debug Output
-disp(Ca_z)
-disp(Mg_z)
-disp(Ba_z)
-disp(Sr_z)
+%disp(Ca_z)
+%disp(Mg_z)
+%disp(Ba_z)
+%disp(Sr_z)
