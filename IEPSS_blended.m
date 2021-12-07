@@ -80,8 +80,13 @@ PSS_ETX = 45.38*3.03 + 0.513*7.84; %Ecotoxicity (CTUe per kg PSS)
 %(code stops on breakthrough of contaminant at a given level set above). 
 %l = number of data points for each contaminant.
 m = 20;
+<<<<<<< HEAD
 n = m*100;
 l = 10000;
+=======
+n = m*500;
+l = 1000;
+>>>>>>> 69ce5c107cd0ae640bb8674f3190a4b28b989340
 bed_volumes = zeros(l,1);
 Mg_ends = zeros(l,1);
 AP = zeros(l,1);
