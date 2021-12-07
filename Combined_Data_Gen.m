@@ -159,7 +159,7 @@ for i=1:n
 
 end
 
-%HCO3 Based Limits, only used if higher than SO4 limits
+%HCO3 Based Limits, only used if lower than SO4 limits
 
 %Converting HCO3_input to mg/l
 HCO3_input = HCO3_input * 1000 * 61; 
@@ -172,9 +172,6 @@ rec = 0.5; %Recovery
 Ksp_HCO3_Ca = 3.3*10^(-9); %Ca selectivity
 Ksp_HCO3_Ba = 2.58*10^(-9); %Ba selectivity
 Ksp_HCO3_Sr = 5.6*10^(-10); %Sr selectivity 
-Ca_ends = zeros(n,1);
-Ba_ends = zeros(n,1);
-Sr_ends = zeros(n,1);
 
 %Main loop
 for i=1:n
@@ -187,19 +184,19 @@ for i=1:n
 
     Ca_sat = Ksp_HCO3_Ca/rej; %mol/l
     
-    if Ca_sat*(1-rec)/sel > Ca_ends(i)
+    if Ca_sat*(1-rec)/sel < Ca_ends(i)
     Ca_ends(i) = Ca_sat*(1-rec)/sel; %mol/l
     end
     
     Ba_sat = Ksp_HCO3_Ba/rej; %mol/l
     
-    if Ba_sat*(1-rec)/sel > Ba_ends(i)
+    if Ba_sat*(1-rec)/sel < Ba_ends(i)
     Ba_ends(i) = Ba_sat*(1-rec)/sel; %mol/l
     end
         
     Sr_sat = Ksp_HCO3_Sr/rej; %mol/l
     
-    if Sr_sat*(1-rec)/sel > Sr_ends(i)
+    if Sr_sat*(1-rec)/sel < Sr_ends(i)
     Sr_ends(i) = Sr_sat*(1-rec)/sel; %mol/l
     end
 
@@ -222,6 +219,7 @@ Sr_input_nz = zeros(m,1);
 Alk_input_nz = zeros(m,1);
 Na_input_nz = zeros(m,1);
 SO4_input_nz = zeros(m,1);
+HCO3_input_nz = zeros(m,l);
 Ca_ends_nz = zeros(m,1);
 Mg_ends_nz = zeros(m,1);
 Ba_ends_nz = zeros(m,1);
@@ -238,6 +236,7 @@ for i = 1:n
         Na_input_nz(l) = Na_input(i);
         Alk_input_nz(l) = Alk_input(i);
         SO4_input_nz(l) = SO4_input(i);
+        HCO3_input_nz(l) = HCO3_input(i);
         Ca_ends_nz(l) = Ca_ends(i);
         Ba_ends_nz(l) = Ba_ends(i);
         Sr_ends_nz(l) = Sr_ends(i);
@@ -262,6 +261,7 @@ Ba_input = zeros(m,1);
 Sr_input = zeros(m,1);
 Alk_input = zeros(m,1);
 SO4_input = zeros(m,1);
+HCO3_input = zeros(m,l);
 
 %Transferring data to original vectors
 Ca_ends = Ca_ends_nz;
@@ -274,6 +274,7 @@ Sr_input = Sr_input_nz;
 Na_input = Na_input_nz;
 Alk_input = Alk_input_nz;
 SO4_input = SO4_input_nz;
+HCO3_input = HCO3_input_nz;
 
 %Saving the data (mol/l)
 save Ba_input.mat Ba_input;
