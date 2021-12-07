@@ -284,6 +284,7 @@ save Mg_input.mat Mg_input;
 save Na_input.mat Na_input;
 save SO4_input.mat SO4_input;
 save Alk_input.mat Alk_input;
+save HCO3_input.mat HCO3_input;
 save Ca_ends.mat Ca_ends;
 save Ba_ends.mat Ba_ends;
 save Sr_ends.mat Sr_ends;

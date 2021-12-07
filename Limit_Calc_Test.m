@@ -89,3 +89,6 @@ end
 csvwrite('Ba_ends_test.csv', Ba_ends);
 csvwrite('Sr_ends_test.csv', Sr_ends);
 csvwrite('Ca_ends_test.csv', Ca_ends);
+save Ba_ends_test.mat Ba_ends
+save Ca_ends_test.mat Ca_ends
+save Sr_ends_test.mat Sr_ends
