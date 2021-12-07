@@ -205,9 +205,7 @@ end
 %% Clean Water Removal
 
 %l keeps track of the new data set index. Mg is not used for this because
-%only ~2% of the time Mg is the only required contaminant and the limit
-%calculation of Mg for 26k data points would take ~15 hrs vie IEPSS_blended
-%model
+%of calculation time in IEPSS model for generating Mg limit data
 count = 0;
 l = 1;
 
