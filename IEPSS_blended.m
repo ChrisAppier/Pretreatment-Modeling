@@ -80,7 +80,7 @@ PSS_ETX = 45.38*3.03 + 0.513*7.84; %Ecotoxicity (CTUe per kg PSS)
 %(code stops on breakthrough of contaminant at a given level set above). 
 %l = number of data points for each contaminant.
 m = 20;
-n = m*500;
+n = m*100;
 l = 10000;
 bed_volumes = zeros(l,1);
 Mg_ends = zeros(l,1);
@@ -214,6 +214,9 @@ parfor k=1:l
     NCAR(k,1) = resin_used(k,1)*PSS_NCAR; %Non-carcinogenics
     RES(k,1) = resin_used(k,1)*PSS_RES; %Respiratory effects
     ETX(k,1) = resin_used(k,1)*PSS_ETX; %Ecotoxicity
+    
+%Converts Mg end point from meq/L to mol/L
+Mg_ends = Mg_ends/(1000*2);
 end
 %% Debug
 
